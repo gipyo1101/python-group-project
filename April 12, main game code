@@ -1,0 +1,57 @@
+import pygame
+
+pygame.init()
+screen = pygame.display.set_mode((1280,720))
+running = True
+title_font = pygame.font.SysFont(None,100)
+button_font = pygame.font.SysFont(None,60)
+dialogue_font = pygame.font.SysFont(None,50)
+start_button = pygame.Rect((410,300,400,100))
+quit_button = pygame.Rect((410,450,400,100))
+menu_background = pygame.image.load('images/menu image1.jpeg').convert()
+menu_background = pygame.transform.scale(menu_background, (1280, 720))
+story = ['I need to escape this room!','The door is locked.', 'I should find some clues to get out of here.']
+story_index = 0
+text_box = pygame.Rect((140,500,1000,120))
+current_state = 'menu'
+while running:
+    screen.fill('black')
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse = pygame.mouse.get_pos()
+            if start_button.collidepoint(mouse):
+                current_state = 'story'
+                story_index = 0
+            if quit_button.collidepoint(mouse):
+                running = False
+        if current_state == 'story':
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    story_index += 1
+                    #if story_index >= len(story):
+                        #current_state = 'game'
+    if current_state == 'menu':
+        screen.blit(menu_background,(0,0))
+        pygame.draw.rect(screen, 'white', start_button)  #(x, y, width, height)
+        pygame.draw.rect(screen, 'white', quit_button)
+        title_text = title_font.render('Escape the House',True,'white')
+        text_in_start = button_font.render("Start", True,'black')
+        text_in_quit = button_font.render("Quit",True,'black')
+        screen.blit(text_in_start, (560,330)) #(x,y)
+        screen.blit(text_in_quit, (565,480))
+        screen.blit(title_text,(325, 120))
+    elif current_state == 'story':
+        screen.fill('black')
+        pygame.draw.rect(screen, 'white', text_box)
+        dialogue = dialogue_font.render(story[story_index],True,'black')
+        screen.blit(dialogue, (400,540))
+
+        
+    elif current_state == 'game':
+        screen.fill('black')
+
+    pygame.display.flip()
+pygame.quit()
