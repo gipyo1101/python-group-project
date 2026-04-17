@@ -5,17 +5,34 @@ screen = pygame.display.set_mode((1280,720))
 title_font = pygame.font.SysFont(None,100)
 button_font = pygame.font.SysFont(None,60)
 dialogue_font = pygame.font.SysFont(None,50)
+
+# menu
 start_button = pygame.Rect((410,300,400,100))
 quit_button = pygame.Rect((410,450,400,100))
 menu_background = pygame.image.load('images/menu image1.jpeg').convert()
 menu_background = pygame.transform.scale(menu_background, (1280, 720))
+
+# character image
 game_character = pygame.image.load('images/game_character.png').convert_alpha() # because of transparency
 character = pygame.Surface((16,16), pygame.SRCALPHA)
+character.set_colorkey((0,0,0))
 character.blit(game_character,(0,0),(0,16,16,16))  #(x,y,width,height)
 character = pygame.transform.scale(character, (64, 64))
 character_x = 100
 character_y = 550
 character_movement_speed = 1
+
+# floor and wall
+floor_wall = pygame.image.load('images/floorswalls_LRK.png').convert_alpha()
+floor = pygame.Surface((44,20), pygame.SRCALPHA)
+floor.blit(floor_wall, (0,0), (((22,82,44,20))))
+#floor = pygame.transform.scale(floor,(48,64))
+floor_background = pygame.Surface((1280,720))
+
+for x in range(0, 1000, 44):
+    for y in range(0,550,20):
+        floor_background.blit(floor, (x,y))
+
 
 story = ['I need to escape this room!','The door is locked.', 'I should find the key to get out of here.']
 story_index = 0
@@ -64,24 +81,25 @@ while running:
         dialogue = dialogue_font.render(story[story_index],True,'black')
         dialogue_rect = dialogue.get_rect(center = text_box.center)
         screen.blit(dialogue,dialogue_rect)
+        
 
         
     elif current_state == 'game':
         keys = pygame.key.get_pressed()
-        screen.fill('black')
+        screen.blit(floor_background,(130,80))
         screen.blit(character, (character_x,character_y)) #(x,y) - start point
-        if keys[pygame.K_LEFT]:
-            character_x -= character_movement_speed
-        if keys[pygame.K_RIGHT]:
-            character_x += character_movement_speed
-        if keys[pygame.K_DOWN]:
-            character_y += character_movement_speed
-        if keys[pygame.K_UP]:
-            character_y -= character_movement_speed
+        
+        if keys[pygame.K_LEFT]: character_x -= character_movement_speed # arrow keys
+        if keys[pygame.K_RIGHT]: character_x += character_movement_speed
+        if keys[pygame.K_DOWN]: character_y += character_movement_speed
+        if keys[pygame.K_UP]: character_y -= character_movement_speed
+
         if character_x < 0: character_x = 0    # screen limits
         if character_x > 1216: character_x = 1216
         if character_y < 0: character_y = 0
         if character_y > 650: character_y = 650
+
+        
 
     pygame.display.flip()
 pygame.quit()
