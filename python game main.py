@@ -9,7 +9,7 @@ dialogue_font = pygame.font.SysFont(None,50)
 # menu
 start_button = pygame.Rect((410,300,400,100))
 quit_button = pygame.Rect((410,450,400,100))
-menu_background = pygame.image.load('images/menu image1.jpeg').convert()
+menu_background = pygame.image.load('images/menu image1.jpeg').convert_alpha()
 menu_background = pygame.transform.scale(menu_background, (1280, 720))
 
 # character image
@@ -17,24 +17,48 @@ game_character = pygame.image.load('images/game_character.png').convert_alpha() 
 character = pygame.Surface((16,16), pygame.SRCALPHA)
 character.set_colorkey((0,0,0))
 character.blit(game_character,(0,0),(0,16,16,16))  #(x,y,width,height)
-character = pygame.transform.scale(character, (64, 64))
-character_x = 100
-character_y = 550
-character_movement_speed = 1
+character = pygame.transform.scale(character, (45,45))
+character_x = 580  
+character_y = 320
+character_movement_speed = 0.5
 
-# floor and wall
-floor_wall = pygame.image.load('images/floorswalls_LRK.png').convert_alpha()
+# floor 
+floor_wall = pygame.image.load('images/floors_LRK.png').convert_alpha()
 floor = pygame.Surface((44,20), pygame.SRCALPHA)
-floor.blit(floor_wall, (0,0), (((22,82,44,20))))
-#floor = pygame.transform.scale(floor,(48,64))
-floor_background = pygame.Surface((1280,720))
-
-for x in range(0, 1000, 44):
-    for y in range(0,550,20):
+floor.blit(floor_wall, (0,0), ((22,82,44,20)))
+floor_background = pygame.Surface((1280,720),pygame.SRCALPHA)
+for x in range(0, 700, 44):
+    for y in range(0,400,20):
         floor_background.blit(floor, (x,y))
 
+# wall
+wall = pygame.Surface((44,80),pygame.SRCALPHA)
+wall.blit(floor_wall,(0,0),(22,20,44,80))
+wall = pygame.transform.scale(wall,(44,150))
+wall_background = pygame.Surface((1000,80),pygame.SRCALPHA)
+for x in range(0,700,44):
+    wall_background.blit(wall,(x,0))
 
-story = ['I need to escape this room!','The door is locked.', 'I should find the key to get out of here.']
+#door
+doors = pygame.image.load('images/doors_LRK.png').convert_alpha()
+door = pygame.Surface((40,56),pygame.SRCALPHA)
+door.blit(doors,(0,0),(102,16,40,56))
+door = pygame.transform.scale(door,(52,64))
+
+
+
+# furniture set
+furniture_set = pygame.image.load('images/furniture set.png').convert_alpha()
+#wall = pygame.Surface((35,63),pygame.SRCALPHA)
+#wall.blit(furniture_set, (0,0),((354, 416, 35, 63)))
+#wall_background = pygame.Surface((1000, 63), pygame.SRCALPHA)
+#for x in range(0,1000,35):
+    #wall_background.blit(wall,(x,0))
+
+
+
+
+story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
 text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
@@ -66,7 +90,7 @@ while running:
         screen.blit(menu_background,(0,0))
         pygame.draw.rect(screen, 'white', start_button)  #(x, y, width, height)
         pygame.draw.rect(screen, 'white', quit_button)
-        title_text = title_font.render('Escape the Room',True,'white')
+        title_text = title_font.render('Escape the House',True,'white')
         start = button_font.render("Start", True,'black')
         start_rect = start.get_rect(center = start_button.center)
         quit = button_font.render("Quit",True,'black')
@@ -86,19 +110,28 @@ while running:
         
     elif current_state == 'game':
         keys = pygame.key.get_pressed()
-        screen.blit(floor_background,(130,80))
+        screen.blit(floor_background,(275,160))
+        screen.blit(wall_background,(275,80))
+        screen.blit(door,(400,108))
+        screen.blit(door,(800,108))
         screen.blit(character, (character_x,character_y)) #(x,y) - start point
+        
         
         if keys[pygame.K_LEFT]: character_x -= character_movement_speed # arrow keys
         if keys[pygame.K_RIGHT]: character_x += character_movement_speed
         if keys[pygame.K_DOWN]: character_y += character_movement_speed
         if keys[pygame.K_UP]: character_y -= character_movement_speed
 
-        if character_x < 0: character_x = 0    # screen limits
-        if character_x > 1216: character_x = 1216
-        if character_y < 0: character_y = 0
-        if character_y > 650: character_y = 650
+        if character_x < 275: character_x = 275   # limits
+        if character_x > 935: character_x = 935
+        if character_y < 140: character_y = 140
+        if character_y > 515: character_y = 515
 
+        current_room = 'centre'
+
+        rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
+                'B':['centre','D'], 'C':['centre','A'], 'D':['centre','B'], 'exit':['centre']}
+        
         
 
     pygame.display.flip()
