@@ -27,17 +27,28 @@ floor_wall = pygame.image.load('images/floors_LRK.png').convert_alpha()
 floor = pygame.Surface((44,20), pygame.SRCALPHA)
 floor.blit(floor_wall, (0,0), ((22,82,44,20)))
 floor_background = pygame.Surface((1280,720),pygame.SRCALPHA)
+exit_floor = pygame.Surface((1280,720),pygame.SRCALPHA)
 for x in range(0, 700, 44):
     for y in range(0,400,20):
         floor_background.blit(floor, (x,y))
+
+for x in range(700,800,44):
+    for y in range(100,280,20):
+        exit_floor.blit(floor,(x,y))
+
 
 # wall
 wall = pygame.Surface((44,80),pygame.SRCALPHA)
 wall.blit(floor_wall,(0,0),(22,20,44,80))
 wall = pygame.transform.scale(wall,(44,150))
 wall_background = pygame.Surface((1000,80),pygame.SRCALPHA)
+wall_back = pygame.Surface((1000,180),pygame.SRCALPHA)
 for x in range(0,700,44):
     wall_background.blit(wall,(x,0))
+
+for x in range(704,800,44):
+    wall_back.blit(wall,(x,100))
+    
 
 #door
 doors = pygame.image.load('images/doors_LRK.png').convert_alpha()
@@ -111,7 +122,9 @@ while running:
     elif current_state == 'game':
         keys = pygame.key.get_pressed()
         screen.blit(floor_background,(275,160))
+        screen.blit(exit_floor,(279.8,160))
         screen.blit(wall_background,(275,80))
+        screen.blit(wall_back,(275,80))
         screen.blit(door,(400,108))
         screen.blit(door,(800,108))
         screen.blit(character, (character_x,character_y)) #(x,y) - start point
@@ -122,10 +135,12 @@ while running:
         if keys[pygame.K_DOWN]: character_y += character_movement_speed
         if keys[pygame.K_UP]: character_y -= character_movement_speed
 
+
         if character_x < 275: character_x = 275   # limits
         if character_x > 935: character_x = 935
         if character_y < 140: character_y = 140
         if character_y > 515: character_y = 515
+
 
         current_room = 'centre'
 
