@@ -20,7 +20,7 @@ character.blit(game_character,(0,0),(0,16,16,16))  #(x,y,width,height)
 character = pygame.transform.scale(character, (45,45))
 character_x = 580  
 character_y = 320
-character_movement_speed = 0.5
+character_movement_speed = 0.7
 
 # floor 
 floor_wall = pygame.image.load('images/floors_LRK.png').convert_alpha()
@@ -30,6 +30,14 @@ floor_background = pygame.Surface((1280,720),pygame.SRCALPHA)
 exit_floor = pygame.Surface((1280,720),pygame.SRCALPHA)
 for x in range(0, 700, 44):
     for y in range(0,400,20):
+        floor_background.blit(floor, (x,y))
+
+for x in range(135,155,44):  
+    for y in range(400,440, 20):
+        floor_background.blit(floor, (x, y))
+
+for x in range(535,555,44):
+    for y in range(400,440,20):
         floor_background.blit(floor, (x,y))
 
 for x in range(700,800,44):
@@ -42,20 +50,19 @@ wall = pygame.Surface((44,80),pygame.SRCALPHA)
 wall.blit(floor_wall,(0,0),(22,20,44,80))
 wall = pygame.transform.scale(wall,(44,150))
 wall_background = pygame.Surface((1000,80),pygame.SRCALPHA)
-wall_back = pygame.Surface((1000,180),pygame.SRCALPHA)
+exit_wall = pygame.Surface((1000,180),pygame.SRCALPHA)
 for x in range(0,700,44):
     wall_background.blit(wall,(x,0))
 
 for x in range(704,800,44):
-    wall_back.blit(wall,(x,100))
+    exit_wall.blit(wall,(x,100))
     
 
-#door
+# door
 doors = pygame.image.load('images/doors_LRK.png').convert_alpha()
 door = pygame.Surface((40,56),pygame.SRCALPHA)
 door.blit(doors,(0,0),(102,16,40,56))
 door = pygame.transform.scale(door,(52,64))
-
 
 
 # furniture set
@@ -65,9 +72,6 @@ furniture_set = pygame.image.load('images/furniture set.png').convert_alpha()
 #wall_background = pygame.Surface((1000, 63), pygame.SRCALPHA)
 #for x in range(0,1000,35):
     #wall_background.blit(wall,(x,0))
-
-
-
 
 story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
@@ -117,18 +121,15 @@ while running:
         dialogue_rect = dialogue.get_rect(center = text_box.center)
         screen.blit(dialogue,dialogue_rect)
         
-
-        
     elif current_state == 'game':
         keys = pygame.key.get_pressed()
         screen.blit(floor_background,(275,160))
         screen.blit(exit_floor,(279.8,160))
         screen.blit(wall_background,(275,80))
-        screen.blit(wall_back,(275,80))
+        screen.blit(exit_wall,(275,80))
         screen.blit(door,(400,108))
         screen.blit(door,(800,108))
         screen.blit(character, (character_x,character_y)) #(x,y) - start point
-        
         
         if keys[pygame.K_LEFT]: character_x -= character_movement_speed # arrow keys
         if keys[pygame.K_RIGHT]: character_x += character_movement_speed
@@ -146,8 +147,6 @@ while running:
 
         rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
                 'B':['centre','D'], 'C':['centre','A'], 'D':['centre','B'], 'exit':['centre']}
-        
-        
 
     pygame.display.flip()
 pygame.quit()
