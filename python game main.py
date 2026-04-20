@@ -7,20 +7,11 @@ button_font = pygame.font.SysFont(None,60)
 dialogue_font = pygame.font.SysFont(None,50)
 
 # menu
-start_button = pygame.Rect((410,300,400,100))
+start_button = pygame.Rect((410,300,400,100)) # (x,y,width,height)
 quit_button = pygame.Rect((410,450,400,100))
 menu_background = pygame.image.load('images/menu image1.jpeg').convert_alpha()
 menu_background = pygame.transform.scale(menu_background, (1280, 720))
 
-# character image
-game_character = pygame.image.load('images/game_character.png').convert_alpha() # because of transparency
-character = pygame.Surface((16,16), pygame.SRCALPHA)
-character.set_colorkey((0,0,0))
-character.blit(game_character,(0,0),(0,16,16,16))  #(x,y,width,height)
-character = pygame.transform.scale(character, (45,45))
-character_x = 580  
-character_y = 320
-character_movement_speed = 0.7
 
 # floor 
 floor_wall = pygame.image.load('images/floors_LRK.png').convert_alpha()
@@ -73,11 +64,57 @@ furniture_set = pygame.image.load('images/furniture set.png').convert_alpha()
 #for x in range(0,1000,35):
     #wall_background.blit(wall,(x,0))
 
+
+class Character:
+    def __init__(self,x,y,speed):
+        game_character = pygame.image.load('images/game_character.png').convert_alpha() # because of transparency
+        self.character_image = pygame.Surface((16,16), pygame.SRCALPHA)
+        self.character_image.blit(game_character,(0,0),(0,16,16,16))
+        self.character_image.set_colorkey((0,0,0))
+        self.character = pygame.transform.scale(self.character_image, (45,45))
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.player = pygame.Rect(self.x,self.y,45,45)
+
+    def movement(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]: self.x -= self.speed # arrow keys
+        if keys[pygame.K_RIGHT]: self.x += self.speed
+        if keys[pygame.K_DOWN]: self.y += self.speed
+        if keys[pygame.K_UP]: self.y -= self.speed
+
+        if self.x < 275: self.x = 275   # limits 
+        if self.x > 935: self.x = 935
+        if self.y < 140: self.y = 140
+        if self.y > 515: self.y = 515
+        
+        self.player.x = self.x      # rect to collide
+        self.player.y = self.y
+        
+        
+    
+    def graphic(self,screen):
+        screen.blit(self.character, self.player)
+        
+
+girl = Character(580,320,0.7)
+
 story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
 text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
 running = True
+
+# room
+current_room = 'centre'
+rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
+                'B':['centre','D'], 'C':['centre','A'], 'D':['centre','B'], 'exit':['centre']}
+room_A = pygame.Rect(410, 78, 52, 63)
+room_B = pygame.Rect(405,535,20,64)
+room_C = pygame.Rect(415, 155, 22, 10)
+room_D = pygame.Rect(415, 155, 22, 10)
+
 
 while running:
     screen.fill('black')
@@ -122,31 +159,32 @@ while running:
         screen.blit(dialogue,dialogue_rect)
         
     elif current_state == 'game':
-        keys = pygame.key.get_pressed()
+        
         screen.blit(floor_background,(275,160))
         screen.blit(exit_floor,(279.8,160))
         screen.blit(wall_background,(275,80))
         screen.blit(exit_wall,(275,80))
         screen.blit(door,(400,108))
         screen.blit(door,(800,108))
-        screen.blit(character, (character_x,character_y)) #(x,y) - start point
         
-        if keys[pygame.K_LEFT]: character_x -= character_movement_speed # arrow keys
-        if keys[pygame.K_RIGHT]: character_x += character_movement_speed
-        if keys[pygame.K_DOWN]: character_y += character_movement_speed
-        if keys[pygame.K_UP]: character_y -= character_movement_speed
+        girl.movement()
+        girl.graphic(screen)
+     
+        if girl.player.colliderect(room_A):
+            current_state = rooms['A']
+        
+        #if character.colliderect(room_B):
+            current_state = rooms['B']
+        
+        #if character.colliderect(room_C):
+            current_state = rooms['C']
 
+        #if character.colliderect(room_D): 
+            current_state = rooms['D']
+        
+    elif current_state == rooms['A']:
+        screen.blit(floor_background,(275,160))
 
-        if character_x < 275: character_x = 275   # limits
-        if character_x > 935: character_x = 935
-        if character_y < 140: character_y = 140
-        if character_y > 515: character_y = 515
-
-
-        current_room = 'centre'
-
-        rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
-                'B':['centre','D'], 'C':['centre','A'], 'D':['centre','B'], 'exit':['centre']}
 
     pygame.display.flip()
 pygame.quit()
