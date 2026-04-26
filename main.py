@@ -1,7 +1,7 @@
 import pygame
 from character import Character
 from assets import get_doors, get_diary, get_bookshelf, get_fireplace, get_walls, get_floors
-from rooms import get_centre_floor, get_A_room_floor, get_exit_floor, get_centre_wall, get_A_room_wall, get_exit_wall
+from rooms import get_centre_floor, get_A_room_floor, get_C_room_floor, get_exit_floor, get_centre_wall, get_A_room_wall, get_B_room_wall, get_exit_wall
 from rooms import get_B_room_floor, get_C_room_floor
 
 pygame.init()
@@ -14,9 +14,13 @@ bookshelf = get_bookshelf()
 fireplace = get_fireplace()
 centre_floor = get_centre_floor(floor)
 A_room_floor = get_A_room_floor(floor)
+B_room_floor = get_B_room_floor(floor) # fajr
+C_room_floor = get_C_room_floor(floor)# fajr
 exit_floor = get_exit_floor(floor)
 centre_wall = get_centre_wall(wall)
 A_room_wall = get_A_room_wall(wall)
+B_room_wall = get_A_room_wall(wall) # fajr 
+C_room_wall = get_centre_wall(wall)
 exit_wall = get_exit_wall(wall)
 B_room_floor = get_B_room_floor(floor,wall)
 C_room_floor = get_C_room_floor(floor,wall)
@@ -38,6 +42,8 @@ rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
 current_room = 'centre'
 room_A = pygame.Rect(410, 78, 52, 63)
 backroom_A = pygame.Rect((675, 835, 45, 45))
+backroom_B = pygame.Rect(520, 650, 60, 40)# fajr
+map_place = pygame.Rect(560, 340, 120, 80)# fajr
 room_B = pygame.Rect(405,535,20,64)
 room_C = pygame.Rect(800,70, 52,63)
 room_D = pygame.Rect(415, 155, 22, 10)
@@ -52,6 +58,10 @@ girl_A = Character(493,530,0.7)
 
 story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
+map_puzzle_open = False # fajr
+map_puzzle_done = False
+piece_count = 0
+map_message = ''
 text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
 running = True
@@ -61,6 +71,27 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+          if event.type == pygame.KEYDOWN:
+              if current_state == 'B':
+
+               if event.key == pygame.K_e:
+                if girl_A.player.colliderect(map_place):
+                 map_open = True
+                 count = 0
+                 text = 'NEW TEXT TEST'
+
+              if event.key == pygame.K_SPACE and map_open:
+               count += 1
+
+            if count == 1:
+                text = 'First piece placed.'
+            elif count == 2:
+                text = 'The picture looks clearer.'
+            elif count == 3:
+                text = 'It looks like a map.'
+            elif count >= 4:
+                text = 'X mark found. The number is 4.'
+              
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()
             if start_button.collidepoint(mouse):
@@ -158,6 +189,46 @@ while running:
 
     elif current_state == 'C':
         screen.blit(C_room_floor,(0,0))
+
+  elif current_state == 'B':
+     screen.blit(B_room_floor, (350, 160))
+     screen.blit(B_room_wall, (350, 80))
+
+    pygame.draw.rect(screen, 'brown', map_place)
+
+    old_x = girl_A.x
+    old_y = girl_A.y
+
+    girl_A.movement()
+
+    main_room = pygame.Rect(430, 160, 430, 370)
+
+    in_main = girl_A.player.colliderect(main_room)
+
+    if not in_main:
+        girl_A.x = old_x
+        girl_A.y = old_y
+
+    if girl_A.player.colliderect(map_place):
+        girl_A.x = old_x
+        girl_A.y = old_y
+
+    if girl_A.player.colliderect(map_place):
+        map_open = True
+        text = 'You found a torn picture. Press SPACE to put the pieces together.'
+
+    if map_open:
+        pygame.draw.rect(screen, 'white', (200, 500, 800, 80))
+        msg = dialogue_font.render(text, True, 'black')
+        screen.blit(msg, (220, 520))
+
+    if girl_A.player.colliderect(backroom_B):
+        current_state = 'game'
+        girl.x = 580
+        girl.y = 140
+
+    girl_A.graphic(screen)
+
         
     pygame.display.flip()
 pygame.quit()
