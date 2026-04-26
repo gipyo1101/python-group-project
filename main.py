@@ -2,6 +2,8 @@ import pygame
 from character import Character
 from assets import get_doors, get_diary, get_bookshelf, get_fireplace, get_walls, get_floors
 from rooms import get_centre_floor, get_A_room_floor, get_exit_floor, get_centre_wall, get_A_room_wall, get_exit_wall
+from rooms import get_B_room_floor, get_C_room_floor
+
 pygame.init()
 screen = pygame.display.set_mode((1280,720))
 floor = get_floors()
@@ -16,6 +18,8 @@ exit_floor = get_exit_floor(floor)
 centre_wall = get_centre_wall(wall)
 A_room_wall = get_A_room_wall(wall)
 exit_wall = get_exit_wall(wall)
+B_room_floor = get_B_room_floor(floor,wall)
+C_room_floor = get_C_room_floor(floor,wall)
 
 
 title_font = pygame.font.SysFont(None,100)
@@ -35,13 +39,16 @@ current_room = 'centre'
 room_A = pygame.Rect(410, 78, 52, 63)
 backroom_A = pygame.Rect((675, 835, 45, 45))
 room_B = pygame.Rect(405,535,20,64)
-room_C = pygame.Rect(415, 155, 22, 10)
+room_C = pygame.Rect(800,70, 52,63)
 room_D = pygame.Rect(415, 155, 22, 10)
 centre_up = pygame.Rect(300,50,700,50)
 
 
-girl = Character(580,320,0.7)
+girl = Character(580,320,1)
 girl_A = Character(493,530,0.7)
+
+
+
 
 story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
@@ -103,14 +110,13 @@ while running:
      
         if girl.player.colliderect(room_A):
             current_state = 'A'
-        #'A' room has a stopped clock and there is a message on the clock that 
-        # 'the passage of years is important.' so there are four bookcases and when 
-        # the character collide with bookcases, the book 
-        # and the year of the book are shown on the screen.
-        #  Through this, we can know that the password of safe is the 
-        # last digit of each book's year, arranged in chronological order. And then 
-        # when we open the safe, we gain the key of the next room ('C' room).
         
+        if girl.player.colliderect(room_B):
+            current_state = 'B'
+        
+        if girl.player.colliderect(room_C):
+            current_state = 'C'
+
     elif current_state == 'A':
         screen.blit(A_room_floor,(350,160))
         screen.blit(A_room_wall,(350,80))
@@ -124,6 +130,34 @@ while running:
             current_state = 'game'
             girl.x = 580
             girl.y = 140
+        
+        if girl.player.colliderect(backroom_A):
+            current_state = 'game'
+            girl.x = 580
+            girl.y = 140
 
+        def bubble_sort_years(books):
+            repeated_nums = len(books) - 1
+            for i in range(repeated_nums, 0, -1):
+                for j in range(i):
+                    if books[j][1] > books[j+1][1]:
+                        temp = books[j]
+                        books[j] = books[j+1]
+                        books[j+1] = temp
+    
+            return books
+        
+        
+        def get_password(books):
+            books_list = bubble_sort_years(books)
+            password = ''.join(str(year)[-1] for pw, year in books_list)
+            return password
+
+    elif current_state == 'B':
+        screen.blit(B_room_floor,(0,0))
+
+    elif current_state == 'C':
+        screen.blit(C_room_floor,(0,0))
+        
     pygame.display.flip()
 pygame.quit()
