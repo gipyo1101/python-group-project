@@ -41,7 +41,7 @@ rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
                 'B':['centre','D'], 'C':['centre','A'], 'D':['centre','B'], 'exit':['centre']}
 current_room = 'centre'
 room_A = pygame.Rect(410, 78, 52, 63)
-backroom_A = pygame.Rect((675, 835, 45, 45))
+backroom_A = pygame.Rect((605, 620, 55, 60))
 backroom_B = pygame.Rect(520, 650, 60, 40)# fajr
 map_place = pygame.Rect(560, 340, 120, 80)# fajr
 room_B = pygame.Rect(405,535,20,64)
@@ -49,9 +49,10 @@ room_C = pygame.Rect(800,70, 52,63)
 room_D = pygame.Rect(415, 155, 22, 10)
 centre_up = pygame.Rect(300,50,700,50)
 
+diary_rect = pygame.Rect((327,115,17,11))
 
-girl = Character(580,320,1)
-girl_A = Character(493,530,0.7)
+girl = Character(580,320,0.7)
+girl_A = Character(600,530,0.5)
 
 
 
@@ -129,6 +130,7 @@ while running:
         screen.blit(dialogue,dialogue_rect)
         
     elif current_state == 'game':
+      if current_room == 'centre' and 'centre' in rooms:
         screen.blit(centre_floor,(275,160))
         screen.blit(exit_floor,(279.8,160))
         screen.blit(centre_wall,(275,80))
@@ -140,15 +142,18 @@ while running:
         girl.graphic(screen)
      
         if girl.player.colliderect(room_A):
-            current_state = 'A'
+          current_state = 'A'
+          girl_A.x = 600
+          girl_A.y = 530
+          
         
         if girl.player.colliderect(room_B):
-            current_state = 'B'
+          current_state = 'B'
         
         if girl.player.colliderect(room_C):
-            current_state = 'C'
+          current_state = 'C'
 
-    elif current_state == 'A':
+    elif current_state == 'A'and 'A' in rooms['centre']:
         screen.blit(A_room_floor,(350,160))
         screen.blit(A_room_wall,(350,80))
         screen.blit(bookshelf,(330,200))
@@ -157,15 +162,11 @@ while running:
         screen.blit(fireplace,(565,110))
         girl_A.movement()
         girl_A.graphic(screen)
-        if girl.player.colliderect(backroom_A):
+        if girl.player.colliderect(backroom_A) and 'centre' in rooms['A']:
             current_state = 'game'
-            girl.x = 580
-            girl.y = 140
-        
-        if girl.player.colliderect(backroom_A):
-            current_state = 'game'
-            girl.x = 580
-            girl.y = 140
+            girl.x = 410
+            girl.y = 160
+      
 
         def bubble_sort_years(books):
             repeated_nums = len(books) - 1
