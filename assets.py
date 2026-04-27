@@ -1,3 +1,4 @@
+#gipyo
 import pygame
 
 def get_floors():
@@ -40,5 +41,5 @@ def get_bookshelf():
     bookshelf_set = pygame.image.load('images/bookshelf_LRK.png').convert_alpha()
     bookshelf = pygame.Surface((134,126),pygame.SRCALPHA)
     bookshelf.blit(bookshelf_set, (0, 0), (0, 0, 134, 126))
-    bookshelf_scale = pygame.transform.scale(bookshelf,(260,260))
+    bookshelf_scale = pygame.transform.scale(bookshelf,(250,250))
     return bookshelf_scale

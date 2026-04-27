@@ -1,3 +1,4 @@
+#gipyo
 import pygame
 
 class Character:
@@ -6,11 +7,11 @@ class Character:
         self.character_image = pygame.Surface((16,16), pygame.SRCALPHA)
         self.character_image.blit(game_character,(0,0),(0,16,16,16))
         self.character_image.set_colorkey((0,0,0))
-        self.character = pygame.transform.scale(self.character_image, (45,45))
+        self.character = pygame.transform.scale(self.character_image, (40,40))
         self.x = x
         self.y = y
         self.speed = speed
-        self.player = pygame.Rect(self.x,self.y,45,45)
+        self.player = pygame.Rect(self.x,self.y,40,40)
 
     def movement(self):
         keys = pygame.key.get_pressed()

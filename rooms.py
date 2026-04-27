@@ -56,8 +56,9 @@ def get_exit_wall(wall):
     for x in range(704,800,44):
         for y in range(100,280,20):
             exit_wall_background.blit(wall,(x,100))
+    return exit_wall_background
 
-    def get_B_room_floor(floor):
+def get_B_room_floor(floor):
     B_floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
 
     for x in range(0,500,44):
@@ -84,5 +85,3 @@ def get_B_room_wall(wall):
 def get_C_room_floor(floor):
     C_room_floor = floor.copy()
     return C_room_floor
-    return exit_wall_background
-
