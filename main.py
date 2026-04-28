@@ -47,23 +47,30 @@ room_C = pygame.Rect(800,70, 52,63)
 room_D = pygame.Rect(415, 155, 22, 10)
 centre_up = pygame.Rect(300,50,700,50)
 
-diary_rect = pygame.Rect((600,320,30,30))
+diary_rect = pygame.Rect((600,340,30,20))
 
 girl = Character(580,320,0.7)
 girl_A = Character(600,530,0.5)
 
 
-
-
-map_puzzle_open = False # fajr
+# fajr
+piece_count = 0
+map_puzzle_open = False 
 map_puzzle_done = False
+map_message = ''
 
-
+#gipyo
 story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
-piece_count = 0
 diary_open = False
-map_message = ''
+diary_texts = ['I loved reading books in the library.',
+               'Reading about the Second World War was helpful for my history class at school.',
+               'I wished I could use spells and magic like the wizards in Harry Potter.', 
+               'I often wondered what it would be like to travel through space and discover new planets.',
+               'I cried after reading tragic romance stories like Romeo and Juliet. It broke my heart.',
+               'My grandfather always told me, "The order of the years hides the truth."']
+books = [("Fantasy", 1995), ("History", 1978),("Science Fiction", 2004),("Romance", 1982)]
+
 text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
 running = True
