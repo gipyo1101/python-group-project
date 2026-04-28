@@ -1,3 +1,4 @@
+#gipyo
 import pygame
 
 def get_centre_floor(floor):
@@ -58,6 +59,7 @@ def get_exit_wall(wall):
             exit_wall_background.blit(wall,(x,100))
     return exit_wall_background
 
+# Fajr
 def get_B_room_floor(floor):
     B_floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
 
@@ -85,3 +87,58 @@ def get_B_room_wall(wall):
 def get_C_room_floor(floor):
     C_room_floor = floor.copy()
     return C_room_floor
+
+#gipyo
+class A_room():
+    def __init__(self,floor, wall, bookshelf, diary, fireplace):
+        self.floor = floor
+        self.wall = wall
+        self.bookshelf = bookshelf
+        self.diary = diary
+        self.fireplace = fireplace
+        
+        self.books = [("Fantasy", 1995), ("History", 1978),("Science Fiction", 2004),("Romance", 1982)]
+        self.diary_open = False
+        self.diary_page = 0
+        self.diary_texts = ['I loved reading books in the library.',
+               'Reading about the Second World War\nwas helpful for my history class at school.',
+               'I wished I could use spells and magic\nlike the wizards in Harry Potter.', 
+               'I often wondered what it would be like to\ntravel through space and discover new planets.',
+               'I cried after reading tragic romance stories\nlike Romeo and Juliet. It broke my heart.',
+               'My grandfather always told me,\n"The order of the years hides the truth."']
+        self.diary_rect = pygame.Rect((600,340,30,20))
+        self.inventory = []
+    
+    def event(self,event,character):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_f:
+                if character.player.colliderect(self.diary_rect):
+                    self.diary_open = True
+                
+            if self.diary_open == True:
+                if event.key == pygame.K_e:
+                    self.diary_page += 1
+                    if self.diary_page >= len(self.diary_texts):
+                        self.diary_page = len(self.diary_texts) - 1
+                if event.key == pygame.K_q:
+                    self.diary_page -= 1
+                    if self.diary_page < 0:
+                        self.diary_page = 0
+
+            if event.key == pygame.K_ESCAPE:
+                self.diary_open = False
+                self.diary_page = 0
+
+    def A_room_screen(self,screen,character,diary_font):
+        screen.blit(self.floor,(350,160))
+        screen.blit(self.wall,(350,80))
+        screen.blit(self.bookshelf,(330,200))
+        screen.blit(self.bookshelf,(630,200))
+        screen.blit(self.diary,(600,350))
+        screen.blit(self.fireplace,(565,110))
+        character.movement()
+        character.graphic(screen)
+        if self.diary_open == True:
+            pygame.draw.rect(screen, 'white', (420, 120, 400, 400))
+            self.diary_story = diary_font.render(self.diary_texts[self.diary_page], True, 'black')
+            screen.blit(self.diary_story, (440,160))

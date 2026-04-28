@@ -1,9 +1,11 @@
 import pygame
 from character import Character
+from rooms import A_room
 from assets import get_doors, get_diary, get_bookshelf, get_fireplace, get_walls, get_floors
 from rooms import get_centre_floor, get_A_room_floor, get_exit_floor, get_centre_wall, get_A_room_wall, get_exit_wall
 from rooms import get_B_room_floor, get_C_room_floor, get_B_room_wall
 
+#gipyo
 pygame.init()
 screen = pygame.display.set_mode((1280,720))
 floor = get_floors()
@@ -14,63 +16,56 @@ bookshelf = get_bookshelf()
 fireplace = get_fireplace()
 centre_floor = get_centre_floor(floor)
 A_room_floor = get_A_room_floor(floor)
-B_room_floor = get_B_room_floor(floor)
-C_room_floor = get_C_room_floor(floor)
+B_room_floor = get_B_room_floor(floor) #fajr
+C_room_floor = get_C_room_floor(floor) #fajr
 exit_floor = get_exit_floor(floor)
 centre_wall = get_centre_wall(wall)
 exit_wall = get_exit_wall(wall)
 A_room_wall = get_A_room_wall(wall)
 B_room_wall = get_A_room_wall(wall) # fajr 
-C_room_wall = get_centre_wall(wall)
+C_room_wall = get_centre_wall(wall) # fajr
+room_a = A_room(A_room_floor, A_room_wall, bookshelf, diary, fireplace)
 
-
+#gipyo
 title_font = pygame.font.SysFont(None,100)
 button_font = pygame.font.SysFont(None,60)
 dialogue_font = pygame.font.SysFont(None,50)
+diary_font = pygame.font.SysFont(None, 30)
 
-# menu
+#gipyo
 start_button = pygame.Rect((410,300,400,100)) # (x,y,width,height)
 quit_button = pygame.Rect((410,450,400,100))
 menu_background = pygame.image.load('images/menu image1.jpeg').convert_alpha()
 menu_background = pygame.transform.scale(menu_background, (1280, 720))
 
-# rooms and rect
+
+#gipyo
 rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
                 'B':['centre','D'], 'C':['centre','A'], 'D':['centre','B'], 'exit':['centre']}
 current_room = 'centre'
-room_A = pygame.Rect(410, 78, 52, 63)
-backroom_A = pygame.Rect((605, 620, 55, 60))
+room_A_rect = pygame.Rect(410, 78, 55, 40)
+backroom_A_rect = pygame.Rect(605, 620, 55, 60)
 backroom_B = pygame.Rect(520, 650, 60, 40)# fajr
 map_place = pygame.Rect(560, 340, 120, 80)# fajr
 room_B = pygame.Rect(405,535,20,64)
 room_C = pygame.Rect(800,70, 52,63)
 room_D = pygame.Rect(415, 155, 22, 10)
 centre_up = pygame.Rect(300,50,700,50)
-
 diary_rect = pygame.Rect((600,340,30,20))
-
 girl = Character(580,320,0.7)
 girl_A = Character(600,530,0.5)
 
 
-# fajr
+#fajr
 piece_count = 0
 map_puzzle_open = False 
 map_puzzle_done = False
 map_message = ''
 
+                
 #gipyo
 story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
-diary_open = False
-diary_texts = ['I loved reading books in the library.',
-               'Reading about the Second World War was helpful for my history class at school.',
-               'I wished I could use spells and magic like the wizards in Harry Potter.', 
-               'I often wondered what it would be like to travel through space and discover new planets.',
-               'I cried after reading tragic romance stories like Romeo and Juliet. It broke my heart.',
-               'My grandfather always told me, "The order of the years hides the truth."']
-books = [("Fantasy", 1995), ("History", 1978),("Science Fiction", 2004),("Romance", 1982)]
-
 text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
 running = True
@@ -98,19 +93,13 @@ while running:
                         current_room = 'centre'
                 else:
                     None
-
-        if event.type == pygame.KEYDOWN:
-            if current_state == 'A':
-                if event.key == pygame.K_f:
-                    if girl_A.player.colliderect(diary_rect):
-                        diary_open = True
+        
+        if current_state == 'A':
+            room_a.event(event,girl_A)
                 
-                if event.key == pygame.K_ESCAPE:
-                        diary_open = False
                 
-                    
-
-            if current_state == 'B': # Fajr
+            #Fajr
+            if current_state == 'B': 
 
                 if event.key == pygame.K_e:
                     if girl_A.player.colliderect(map_place):
@@ -132,8 +121,8 @@ while running:
                         elif count >= 4:
                             text = 'X mark found. The number is 4.'
 
-
-    if current_state == 'menu': # gipyo
+    #gipyo
+    if current_state == 'menu':
         screen.blit(menu_background,(0,0))
         pygame.draw.rect(screen, 'white', start_button)  #(x, y, width, height)
         pygame.draw.rect(screen, 'white', quit_button)
@@ -146,14 +135,17 @@ while running:
         screen.blit(quit,quit_rect)
         screen.blit(title_text,(340, 150)) #(x,y)
 
-    elif current_state == 'story': # gipyo
+    #gipyo
+    elif current_state == 'story': 
         pygame.draw.rect(screen, 'white', text_box)
         dialogue = dialogue_font.render(story[story_index],True,'black')
         dialogue_rect = dialogue.get_rect(center = text_box.center)
         screen.blit(dialogue,dialogue_rect)
-        
-    elif current_state == 'game':
-        if current_room == 'centre' and 'centre' in rooms: #gipyo
+
+
+    #gipyo
+    elif current_state == 'game': 
+        if current_room == 'centre' and 'centre' in rooms: 
             screen.blit(centre_floor,(275,160))
             screen.blit(exit_floor,(279.8,160))
             screen.blit(centre_wall,(275,80))
@@ -164,7 +156,7 @@ while running:
             girl.movement()
             girl.graphic(screen)
      
-            if girl.player.colliderect(room_A):
+            if girl.player.colliderect(room_A_rect):
                 current_state = 'A'
                 girl_A.x = 600
                 girl_A.y = 530
@@ -175,28 +167,14 @@ while running:
             if girl.player.colliderect(room_C):
                 current_state = 'C'
 
+    #gipyo
     elif current_state == 'A':
-        if 'A' in rooms['centre']:  # gipyo
-            screen.blit(A_room_floor,(350,160))
-            screen.blit(A_room_wall,(350,80))
-            screen.blit(bookshelf,(330,200))
-            screen.blit(bookshelf,(630,200))
-            screen.blit(diary,(600,350))
-            screen.blit(fireplace,(565,110))
-            girl_A.movement()
-            girl_A.graphic(screen)
-            if girl_A.player.colliderect(backroom_A) and 'centre' in rooms['A']:
+        if 'A' in rooms['centre']:  
+            room_a.A_room_screen(screen,girl_A,diary_font)
+            if girl_A.player.colliderect(backroom_A_rect) and 'centre' in rooms['A']:
                 current_state = 'game'
                 girl.x = 410
                 girl.y = 160
-
-            if diary_open == True:
-                pygame.draw.rect(screen, 'white', (420, 120, 400, 400))
-    
-                
-
-            
-               
 
         def bubble_sort_years(books):
             repeated_nums = len(books) - 1
@@ -215,7 +193,8 @@ while running:
             password = ''.join(str(year)[-1] for pw, year in books_list)
             return password
 
-    elif current_state == 'B': # Fajr
+    # Fajr
+    elif current_state == 'B':
         screen.blit(B_room_floor, (350, 160))
         screen.blit(B_room_wall, (350, 80))
 
@@ -254,6 +233,7 @@ while running:
 
         girl_A.graphic(screen)
 
+    #Hashim
     elif current_state == 'C':
         screen.blit(C_room_floor,(0,0))
     

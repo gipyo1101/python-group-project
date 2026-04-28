@@ -30,8 +30,6 @@ class Character:
         
         self.player.x = self.x      # rect to collide
         self.player.y = self.y
-        
-        
     
     def graphic(self,screen):
         screen.blit(self.character, self.player)  
