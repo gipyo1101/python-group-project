@@ -1,6 +1,5 @@
 #gipyo
 import pygame
-
 def get_centre_floor(floor):
     floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
     for x in range(0, 700, 44):
@@ -58,6 +57,7 @@ def get_exit_wall(wall):
         for y in range(100,280,20):
             exit_wall_background.blit(wall,(x,100))
     return exit_wall_background
+#gipyo
 
 # Fajr
 def get_B_room_floor(floor):
@@ -87,6 +87,7 @@ def get_B_room_wall(wall):
 def get_C_room_floor(floor):
     C_room_floor = floor.copy()
     return C_room_floor
+#Fajr
 
 #gipyo
 class A_room():
@@ -142,3 +143,4 @@ class A_room():
             pygame.draw.rect(screen, 'white', (420, 120, 400, 400))
             self.diary_story = diary_font.render(self.diary_texts[self.diary_page], True, 'black')
             screen.blit(self.diary_story, (440,160))
+#gipyo

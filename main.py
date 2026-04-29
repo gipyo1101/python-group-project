@@ -5,7 +5,7 @@ from assets import get_doors, get_diary, get_bookshelf, get_fireplace, get_walls
 from rooms import get_centre_floor, get_A_room_floor, get_exit_floor, get_centre_wall, get_A_room_wall, get_exit_wall
 from rooms import get_B_room_floor, get_C_room_floor, get_B_room_wall
 
-#gipyo
+#gipyo 
 pygame.init()
 screen = pygame.display.set_mode((1280,720))
 floor = get_floors()
@@ -25,50 +25,89 @@ A_room_wall = get_A_room_wall(wall)
 B_room_wall = get_A_room_wall(wall) # fajr 
 C_room_wall = get_centre_wall(wall) # fajr
 room_a = A_room(A_room_floor, A_room_wall, bookshelf, diary, fireplace)
+#gipyo
 
 #gipyo
 title_font = pygame.font.SysFont(None,100)
 button_font = pygame.font.SysFont(None,60)
 dialogue_font = pygame.font.SysFont(None,50)
 diary_font = pygame.font.SysFont(None, 30)
+#gipyo
 
 #gipyo
 start_button = pygame.Rect((410,300,400,100)) # (x,y,width,height)
 quit_button = pygame.Rect((410,450,400,100))
 menu_background = pygame.image.load('images/menu image1.jpeg').convert_alpha()
 menu_background = pygame.transform.scale(menu_background, (1280, 720))
-
+#gipyo
 
 #gipyo
-rooms = {'centre':['A','B','C','D','exit'], 'A':['centre','C'],
-                'B':['centre','D'], 'C':['centre','A'], 'D':['centre','B'], 'exit':['centre']}
+rooms = {'centre':['A','B','C','exit'], 'A':['centre','C'],
+                'B':['centre'], 'C':['centre','A'], 'exit':['centre']}
 current_room = 'centre'
-room_A_rect = pygame.Rect(410, 78, 55, 40)
+room_A_rect = pygame.Rect(415, 130, 30, 40)
 backroom_A_rect = pygame.Rect(605, 620, 55, 60)
-backroom_B = pygame.Rect(520, 650, 60, 40)# fajr
-map_place = pygame.Rect(560, 340, 120, 80)# fajr
-room_B = pygame.Rect(405,535,20,64)
-room_C = pygame.Rect(800,70, 52,63)
-room_D = pygame.Rect(415, 155, 22, 10)
+
+#Hashim
+room_B_rect = pygame.Rect(410,560,44,40)
+room_C_rect = pygame.Rect(820,130,30,40)
+backroom_B = pygame.Rect(595, 150, 44, 40)
+backroom_C = pygame.Rect(595, 560, 44, 40)
+#Hashim
+
+#Hashim
+centre_walkable = [
+    pygame.Rect(275, 160, 704, 400),   # main centre room floor
+    pygame.Rect(410, 560, 44, 40),     # bottom left doorway
+    pygame.Rect(810, 560, 44, 40),     # bottom right doorway
+    pygame.Rect(940, 260, 60, 180),    # connector to right side
+    pygame.Rect(980, 260, 100, 180),   # right side corridor
+]
+
+A_walkable = [
+    pygame.Rect(350, 160, 528, 400),   # main room A floor
+    pygame.Rect(595, 560, 44, 40),     # bottom doorway
+    pygame.Rect(878, 320, 60, 60),     # right side extension
+]
+
+B_walkable = [
+    pygame.Rect(350, 160, 528, 400),   # main room B floor
+    pygame.Rect(595, 150, 44, 40),     # top doorway
+    pygame.Rect(878, 320, 60, 60),     # right side extension
+]
+
+C_walkable = [
+    pygame.Rect(350, 160, 528, 400),   # main room C floor
+    pygame.Rect(595, 560, 44, 40),     # bottom doorway
+]
+#Hashim
+
+#gipyo
 centre_up = pygame.Rect(300,50,700,50)
 diary_rect = pygame.Rect((600,340,30,20))
 girl = Character(580,320,0.7)
 girl_A = Character(600,530,0.5)
+# gipyo
 
+#Hashim
+girl_B = Character(595,510,0.7)
+girl_C = Character(595,510,0.7)
+#Hashim
 
-#fajr
+# fajr
 piece_count = 0
 map_puzzle_open = False 
 map_puzzle_done = False
 map_message = ''
-
+# fajr
                 
-#gipyo
+# gipyo
 story = ['I need to escape this house!','The exit is locked.', 'I should find the key to get out of here.']
 story_index = 0
 text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
 running = True
+# gipyo
 
 while running:
     screen.fill('black')
@@ -93,14 +132,13 @@ while running:
                         current_room = 'centre'
                 else:
                     None
-        
-        if current_state == 'A':
-            room_a.event(event,girl_A)
+        if event.type == pygame.KEYDOWN:
+            if current_state == 'A':
+                room_a.event(event,girl_A)
                 
                 
             #Fajr
             if current_state == 'B': 
-
                 if event.key == pygame.K_e:
                     if girl_A.player.colliderect(map_place):
                         map__puzzle_open = True
@@ -134,6 +172,7 @@ while running:
         screen.blit(start,start_rect) 
         screen.blit(quit,quit_rect)
         screen.blit(title_text,(340, 150)) #(x,y)
+    #gipyo
 
     #gipyo
     elif current_state == 'story': 
@@ -141,7 +180,7 @@ while running:
         dialogue = dialogue_font.render(story[story_index],True,'black')
         dialogue_rect = dialogue.get_rect(center = text_box.center)
         screen.blit(dialogue,dialogue_rect)
-
+    #gipyo
 
     #gipyo
     elif current_state == 'game': 
@@ -152,21 +191,36 @@ while running:
             screen.blit(exit_wall,(275,80))
             screen.blit(door,(400,108))
             screen.blit(door,(800,108))
-        
-            girl.movement()
+            #gipyo
+
+            #Hashim
+            # debug rectangles, remove later
+            for area in centre_walkable:
+                pygame.draw.rect(screen, 'green', area, 2)
+                pygame.draw.rect(screen, 'blue', room_A_rect, 2)
+                pygame.draw.rect(screen, 'blue', room_C_rect, 2)
+                pygame.draw.rect(screen, 'blue', room_B_rect, 2)
+                pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)
+
+            girl.movement(centre_walkable)
             girl.graphic(screen)
+
+            if girl.feet_hitbox().colliderect(room_A_rect):
+                    current_state = 'A'
+                    girl_A.set_position(595,510)
+
+            if girl.feet_hitbox().colliderect(room_C_rect):
+                current_state = 'C'
+                girl_C.set_position(595,510)
+
+            if girl.feet_hitbox().colliderect(room_B_rect):
+                current_state = 'B'
+                girl_B.set_position(595,170)
+            #Hashim
      
-            if girl.player.colliderect(room_A_rect):
-                current_state = 'A'
                 girl_A.x = 600
                 girl_A.y = 530
-            if girl.player.colliderect(room_B):
-                current_state = 'B'
-                
-        
-            if girl.player.colliderect(room_C):
-                current_state = 'C'
-
+            
     #gipyo
     elif current_state == 'A':
         if 'A' in rooms['centre']:  
@@ -175,6 +229,25 @@ while running:
                 current_state = 'game'
                 girl.x = 410
                 girl.y = 160
+        
+            if room_a.diary_open == True:
+                pygame.draw.rect(screen, 'white', (420, 120, 400, 400))
+        
+        for area in A_walkable:
+            pygame.draw.rect(screen, 'green', area, 2)
+            pygame.draw.rect(screen, 'blue', backroom_A_rect, 2)
+            pygame.draw.rect(screen, 'purple', girl_A.feet_hitbox(), 2)
+
+        girl_A.movement(A_walkable)
+        girl_A.graphic(screen)
+
+        if girl_A.feet_hitbox().colliderect(backroom_A_rect):
+            current_state = 'game'
+            girl.set_position(405,165)
+
+        
+    
+
 
         def bubble_sort_years(books):
             repeated_nums = len(books) - 1
