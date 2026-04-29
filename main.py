@@ -46,7 +46,7 @@ rooms = {'centre':['A','B','C','exit'], 'A':['centre','C'],
                 'B':['centre'], 'C':['centre','A'], 'exit':['centre']}
 current_room = 'centre'
 room_A_rect = pygame.Rect(415, 130, 30, 40)
-backroom_A_rect = pygame.Rect(605, 620, 55, 60)
+backroom_A_rect = pygame.Rect(590, 600, 55, 30)
 
 #Hashim
 room_B_rect = pygame.Rect(410,560,44,40)
@@ -200,7 +200,7 @@ while running:
                 pygame.draw.rect(screen, 'blue', room_A_rect, 2)
                 pygame.draw.rect(screen, 'blue', room_C_rect, 2)
                 pygame.draw.rect(screen, 'blue', room_B_rect, 2)
-                pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)
+                #pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)
 
             girl.movement(centre_walkable)
             girl.graphic(screen)
@@ -223,48 +223,22 @@ while running:
             
     #gipyo
     elif current_state == 'A':
-        if 'A' in rooms['centre']:  
+        if 'A' in rooms['centre']:
             room_a.A_room_screen(screen,girl_A,diary_font)
-            if girl_A.player.colliderect(backroom_A_rect) and 'centre' in rooms['A']:
+
+            if girl_A.feet_hitbox().colliderect(backroom_A_rect) and 'centre' in rooms['A']:
                 current_state = 'game'
-                girl.x = 410
-                girl.y = 160
+                girl.set_position(410,160)
+            if room_a.diary_open == False:
+                girl_A.movement(A_walkable)
+                girl_A.graphic(screen)
         
-            if room_a.diary_open == True:
-                pygame.draw.rect(screen, 'white', (420, 120, 400, 400))
-        
-        for area in A_walkable:
-            pygame.draw.rect(screen, 'green', area, 2)
-            pygame.draw.rect(screen, 'blue', backroom_A_rect, 2)
-            pygame.draw.rect(screen, 'purple', girl_A.feet_hitbox(), 2)
+            for area in A_walkable:
+                pygame.draw.rect(screen, 'green', area, 2)
+                pygame.draw.rect(screen, 'blue', backroom_A_rect, 2)
+                #pygame.draw.rect(screen, 'purple', girl_A.feet_hitbox(), 2)
 
-        girl_A.movement(A_walkable)
-        girl_A.graphic(screen)
-
-        if girl_A.feet_hitbox().colliderect(backroom_A_rect):
-            current_state = 'game'
-            girl.set_position(405,165)
-
-        
-    
-
-
-        def bubble_sort_years(books):
-            repeated_nums = len(books) - 1
-            for i in range(repeated_nums, 0, -1):
-                for j in range(i):
-                    if books[j][1] > books[j+1][1]:
-                        temp = books[j]
-                        books[j] = books[j+1]
-                        books[j+1] = temp
-    
-            return books
-        
-        
-        def get_password(books):
-            books_list = bubble_sort_years(books)
-            password = ''.join(str(year)[-1] for pw, year in books_list)
-            return password
+       
 
     # Fajr
     elif current_state == 'B':
