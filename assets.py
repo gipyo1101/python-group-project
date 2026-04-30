@@ -1,6 +1,5 @@
 #gipyo
 import pygame
-
 def get_floors():
     floors = pygame.image.load('images/floorswalls_LRK.png').convert_alpha()
     floor = pygame.Surface((44,20), pygame.SRCALPHA)
@@ -43,3 +42,4 @@ def get_bookshelf():
     bookshelf.blit(bookshelf_set, (0, 0), (0, 0, 134, 126))
     bookshelf_scale = pygame.transform.scale(bookshelf,(250,250))
     return bookshelf_scale
+#gipyo

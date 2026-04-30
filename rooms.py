@@ -98,18 +98,18 @@ class A_room():
         self.diary = diary
         self.fireplace = fireplace
         
-        self.books = [('Economics',2001),("Fantasy", 1995), ("History", 1978),
-                      ("Astronomy", 2004),("Romance", 1982),
-                      ('Biography',1997),('Mathematics',2013),('Computer Science',2006)]
-        self.bookshelves_rect = [pygame.Rect(330, 200, 120, 130), pygame.Rect(500, 200, 120, 130), 
-                                 pygame.Rect(760, 200, 120, 130), pygame.Rect(930, 200, 120, 130),  
-                                 pygame.Rect(330, 430, 120, 130), pygame.Rect(500, 430, 120, 130),  
-                                 pygame.Rect(760, 430, 120, 130), pygame.Rect(930, 430, 120, 130)]
+        self.books = [('Economics',2001),("Astronomy", 2004),
+                      ('Mathematics',2013),("Fantasy", 1995), ('Computer Science',2006),
+                      ("History", 1978),('Biography',1997),("Romance", 1982)]
+        self.bookshelves_rect = [pygame.Rect(360, 230, 90, 100), pygame.Rect(480, 230, 90, 100), 
+                                 pygame.Rect(660, 230, 90, 100), pygame.Rect(780, 230, 90, 100),  
+                                 pygame.Rect(360, 360, 90, 90), pygame.Rect(480, 360, 90, 90),  
+                                 pygame.Rect(660, 360, 90, 90), pygame.Rect(780, 360, 90, 90)]
         
-        self.genres = ['History', 'Romance','Fantasy','Astronomy',
-                       'Biography','Mathematics','Computer Science','Economics']
+        self.genres = ['Economics', 'Astronomy','Mathematics','Fantasy',
+                       'Computer Science','History','Biography','Romance']
         
-        self.diary_rect = pygame.Rect((600,360,40,30))
+        self.diary_rect = pygame.Rect((595,340,40,40))
         self.diary_open = False
         self.diary_page = 0
         self.diary_texts = ['I loved reading books in the library.',
@@ -179,31 +179,34 @@ class A_room():
                 self.inventory_open = False
             
 
-    def A_room_screen(self,screen,character,diary_font):
+    def A_room_screen(self,screen,character,diary_font,dialogue_font):
         screen.blit(self.floor,(350,160))
         screen.blit(self.wall,(350,80))
         screen.blit(self.bookshelf,(330,200))
         screen.blit(self.bookshelf,(630,200))
         screen.blit(self.diary,(600,350))
         screen.blit(self.fireplace,(565,110))
+
+        
         if self.diary_open == True:
             pygame.draw.rect(screen, 'white', (420, 120, 400, 400))
             self.diary_inside = diary_font.render(self.diary_texts[self.diary_page], True, 'black')
             screen.blit(self.diary_inside, (440,160))
 
         if self.inventory_open == True:
-            pygame.draw.rect(screen,'white',(100,300,1000,200))
+            pygame.draw.rect(screen,'white',(30,200,300,300))
             for i in range(len(self.inventory)):
                 title_year = str(self.inventory[i])
                 inventory_text = diary_font.render(title_year,True,'black')
-                screen.blit(inventory_text,(150,300+ i * 20))
+                screen.blit(inventory_text,(50,220+ i * 30))
 
         if self.inventory:
             found_books = self.inventory[-1]
             books_genre = found_books[0]
-            pygame.draw.rect(screen, 'white', (290, 600, 650, 60))
-            finding_texts = diary_font.render("You found a " + books_genre + " book.", True, 'black')
-            screen.blit(finding_texts, (470, 620))
+            finding_books_rect = pygame.draw.rect(screen, 'white', (280,550,700,80))
+            finding_texts = dialogue_font.render("You found a " + books_genre + " book.", True, 'black')
+            finding_rect = finding_texts.get_rect(center = finding_books_rect.center)
+            screen.blit(finding_texts,finding_rect)
 
     def linear_search_books(self,genre):
         for i in range(len(self.books)):

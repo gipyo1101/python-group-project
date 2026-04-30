@@ -45,17 +45,24 @@ menu_background = pygame.transform.scale(menu_background, (1280, 720))
 rooms = {'centre':['A','B','C','exit'], 'A':['centre','C'],
                 'B':['centre'], 'C':['centre','A'], 'exit':['centre']}
 current_room = 'centre'
-room_A_rect = pygame.Rect(415, 130, 30, 40)
+room_A_rect = pygame.Rect(420, 130, 30, 40)
 backroom_A_rect = pygame.Rect(590, 600, 55, 30)
+bookshelf_1_rect = pygame.Rect(360, 230, 90, 100)
+bookshelf_2_rect = pygame.Rect(480, 230, 90, 100)
+bookshelf_3_rect = pygame.Rect(660, 230, 90, 100)
+bookshelf_4_rect = pygame.Rect(780, 230, 90, 100)
+bookshelf_5_rect = pygame.Rect(360, 360, 90, 90)
+bookshelf_6_rect = pygame.Rect(480, 360, 90, 90)
+bookshelf_7_rect = pygame.Rect(660, 360, 90, 90)
+bookshelf_8_rect = pygame.Rect(780, 360, 90, 90)
+#gipyo
 
 #Hashim
 room_B_rect = pygame.Rect(410,560,44,40)
 room_C_rect = pygame.Rect(820,130,30,40)
 backroom_B = pygame.Rect(595, 150, 44, 40)
 backroom_C = pygame.Rect(595, 560, 44, 40)
-#Hashim
 
-#Hashim
 centre_walkable = [
     pygame.Rect(275, 160, 704, 400),   # main centre room floor
     pygame.Rect(410, 560, 44, 40),     # bottom left doorway
@@ -84,14 +91,13 @@ C_walkable = [
 
 #gipyo
 centre_up = pygame.Rect(300,50,700,50)
-diary_rect = pygame.Rect((600,340,30,20))
-girl = Character(580,320,0.7)
-girl_A = Character(600,530,0.5)
+girl = Character(580,320,1)
+girl_A = Character(600,530,0.7)
 # gipyo
 
 #Hashim
-girl_B = Character(595,510,0.7)
-girl_C = Character(595,510,0.7)
+girl_B = Character(595,510,1)
+girl_C = Character(595,510,1)
 #Hashim
 
 # fajr
@@ -195,11 +201,11 @@ while running:
 
             #Hashim
             # debug rectangles, remove later
-            for area in centre_walkable:
-                pygame.draw.rect(screen, 'green', area, 2)
-                pygame.draw.rect(screen, 'blue', room_A_rect, 2)
-                pygame.draw.rect(screen, 'blue', room_C_rect, 2)
-                pygame.draw.rect(screen, 'blue', room_B_rect, 2)
+            #for area in centre_walkable:
+                #pygame.draw.rect(screen, 'green', area, 2)
+                #pygame.draw.rect(screen, 'blue', room_A_rect, 2)
+                #pygame.draw.rect(screen, 'blue', room_C_rect, 2)
+                #pygame.draw.rect(screen, 'blue', room_B_rect, 2)
                 #pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)
 
             girl.movement(centre_walkable)
@@ -224,7 +230,7 @@ while running:
     #gipyo
     elif current_state == 'A':
         if 'A' in rooms['centre']:
-            room_a.A_room_screen(screen,girl_A,diary_font)
+            room_a.A_room_screen(screen,girl_A,diary_font,dialogue_font)
 
             if girl_A.feet_hitbox().colliderect(backroom_A_rect) and 'centre' in rooms['A']:
                 current_state = 'game'
@@ -234,9 +240,19 @@ while running:
                 girl_A.graphic(screen)
         
             for area in A_walkable:
-                pygame.draw.rect(screen, 'green', area, 2)
-                pygame.draw.rect(screen, 'blue', backroom_A_rect, 2)
+                #pygame.draw.rect(screen, 'green', area, 2)
+                #pygame.draw.rect(screen, 'blue', backroom_A_rect, 2)
+                pygame.draw.rect(screen,'blue',room_a.diary_rect,2)
                 #pygame.draw.rect(screen, 'purple', girl_A.feet_hitbox(), 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_1_rect, 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_2_rect, 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_3_rect, 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_4_rect, 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_5_rect, 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_6_rect, 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_7_rect, 2)
+                pygame.draw.rect(screen, 'blue', bookshelf_8_rect, 2)
+               
 
        
 
