@@ -29,12 +29,12 @@ def get_diary():
     diary_scale = pygame.transform.scale(diary,(30,20))
     return diary_scale
 
-def get_fireplace():
+def get_desk():
     furniture_set = pygame.image.load('images/furniture set.png').convert_alpha()
-    fireplace = pygame.Surface((60,55),pygame.SRCALPHA)
-    fireplace.blit(furniture_set,(0,0),(250,330,60,55))
-    fireplace_scale = pygame.transform.scale(fireplace,(100,95))
-    return fireplace_scale
+    desk = pygame.Surface((65,65),pygame.SRCALPHA)
+    desk.blit(furniture_set,(0,0),(252,0,65,65))
+    desk_scale = pygame.transform.scale(desk,(110,90))
+    return desk_scale
 
 def get_bookshelf():
     bookshelf_set = pygame.image.load('images/bookshelf_LRK.png').convert_alpha()

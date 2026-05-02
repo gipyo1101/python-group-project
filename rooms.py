@@ -91,12 +91,12 @@ def get_C_room_floor(floor):
 
 #gipyo
 class A_room():
-    def __init__(self,floor, wall, bookshelf, diary, fireplace):
+    def __init__(self,floor, wall, bookshelf, diary, desk):
         self.floor = floor
         self.wall = wall
         self.bookshelf = bookshelf
         self.diary = diary
-        self.fireplace = fireplace
+        self.desk = desk
         
         self.books = [('Economics',2001),("Astronomy", 2004),
                       ('Mathematics',2013),("Fantasy", 1995), ('Computer Science',2006),
@@ -118,6 +118,7 @@ class A_room():
                'I often imagined\ntravelling through\nspace and discovering\nnew planets.',
                'I cried after reading\ntragic romance stories\nlike Romeo and Juliet.\nIt broke my heart.',
                'My grandfather always\ntold me,\n"The order of the\nyears hides the truth."']
+        self.diary_check = False
         
         self.books_finding = {'History': "You found a History book.",
                           'Romance': "You found a Romance book.",
@@ -133,13 +134,15 @@ class A_room():
         self.A_room_story = True
         self.storylines = ["There is a book on the floor.",
                            "Press F near that book and press Q or E to turn the pages.",
+                           'Press ESC to close the diary after reading it.',
                            "Hmm...","It looks like a diary.",
                            "This can be the clue for finding the key.",
                            "The first book was related to history.",
                            "The second book was about magic and fantasy.",
                            "The third book was about the space.",
                            "The last book was about romance.",
-                           "I need to find those books in the bookshelves."]
+                           "Hmm... there are 8 bookshelves in this room.",
+                           "Oh! This must be the clue!"]
         self.A_room_story_index = 0
         
     def event(self,event,character):
@@ -158,14 +161,22 @@ class A_room():
             
             if event.key == pygame.K_SPACE:
                 if self.A_room_story == True:
-                    self.A_room_story_index += 1
-                    if self.A_room_story_index >= 2:
-                        self.A_room_story = False
-
+                    self.A_room_story_index += 1               
+                    if self.diary_check == False:
+                        if self.A_room_story_index >= 3:
+                            self.A_room_story = False
+                    
+                    else:
+                        if self.A_room_story_index >= len(self.storylines):
+                            self.A_room_story = False
+                
 
             
             if event.key == pygame.K_i:
-                self.inventory_open = True
+                if self.inventory_open == False:
+                    self.inventory_open = True
+                else:
+                    self.inventory_open = False
 
 
             if self.diary_open == True:
@@ -178,10 +189,14 @@ class A_room():
                     if self.diary_page < 0:
                         self.diary_page = 0
 
-            if event.key == pygame.K_ESCAPE:
-                self.diary_open = False
-                self.diary_page = 0
-                self.inventory_open = False
+                if event.key == pygame.K_ESCAPE:
+                    self.diary_open = False                   
+                    self.diary_page = 0
+                    if self.diary_check == False:
+                        self.diary_check = True
+                        self.A_room_story = True
+                        self.A_room_story_index = 3
+
             
             
 
@@ -191,7 +206,7 @@ class A_room():
         screen.blit(self.bookshelf,(330,200))
         screen.blit(self.bookshelf,(630,200))
         screen.blit(self.diary,(600,350))
-        screen.blit(self.fireplace,(565,110))
+        screen.blit(self.desk,(553,110))
         
 
         if self.A_room_story == True:

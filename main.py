@@ -1,7 +1,7 @@
 import pygame
 from character import Character
 from rooms import A_room
-from assets import get_doors, get_diary, get_bookshelf, get_fireplace, get_walls, get_floors
+from assets import get_doors, get_diary, get_bookshelf, get_desk, get_walls, get_floors
 from rooms import get_centre_floor, get_A_room_floor, get_exit_floor, get_centre_wall, get_A_room_wall, get_exit_wall
 from rooms import get_B_room_floor, get_C_room_floor, get_B_room_wall
 
@@ -13,7 +13,7 @@ wall = get_walls()
 door = get_doors()
 diary = get_diary()
 bookshelf = get_bookshelf()
-fireplace = get_fireplace()
+desk = get_desk()
 centre_floor = get_centre_floor(floor)
 A_room_floor = get_A_room_floor(floor)
 B_room_floor = get_B_room_floor(floor) #fajr
@@ -24,7 +24,7 @@ exit_wall = get_exit_wall(wall)
 A_room_wall = get_A_room_wall(wall)
 B_room_wall = get_A_room_wall(wall) # fajr 
 C_room_wall = get_centre_wall(wall) # fajr
-room_a = A_room(A_room_floor, A_room_wall, bookshelf, diary, fireplace)
+room_a = A_room(A_room_floor, A_room_wall, bookshelf, diary, desk)
 #gipyo
 
 #gipyo
@@ -238,7 +238,7 @@ while running:
                 current_state = 'game'
                 girl.set_position(410,160)
             if room_a.A_room_story == False and room_a.diary_open == False:
-                girl_A.movement(A_walkable)
+                girl_A.movement(A_walkable)    
                 girl_A.graphic(screen)
         
             for area in A_walkable:
