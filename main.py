@@ -47,14 +47,14 @@ rooms = {'centre':['A','B','C','exit'], 'A':['centre','C'],
 current_room = 'centre'
 room_A_rect = pygame.Rect(420, 130, 30, 40)
 backroom_A_rect = pygame.Rect(590, 600, 55, 30)
-bookshelf_1_rect = pygame.Rect(360, 230, 90, 100)
-bookshelf_2_rect = pygame.Rect(480, 230, 90, 100)
-bookshelf_3_rect = pygame.Rect(660, 230, 90, 100)
-bookshelf_4_rect = pygame.Rect(780, 230, 90, 100)
-bookshelf_5_rect = pygame.Rect(360, 360, 90, 90)
-bookshelf_6_rect = pygame.Rect(480, 360, 90, 90)
-bookshelf_7_rect = pygame.Rect(660, 360, 90, 90)
-bookshelf_8_rect = pygame.Rect(780, 360, 90, 90)
+bookshelf_1_rect = pygame.Rect(360, 320, 90, 30)
+bookshelf_2_rect = pygame.Rect(480, 320, 90, 30)
+bookshelf_3_rect = pygame.Rect(660, 320, 90, 30)
+bookshelf_4_rect = pygame.Rect(780, 320, 90, 30)
+bookshelf_5_rect = pygame.Rect(360, 440, 90, 30)
+bookshelf_6_rect = pygame.Rect(480, 440, 90, 30)
+bookshelf_7_rect = pygame.Rect(660, 440, 90, 30)
+bookshelf_8_rect = pygame.Rect(780, 440, 90, 30)
 #gipyo
 
 #Hashim
@@ -231,11 +231,13 @@ while running:
     elif current_state == 'A':
         if 'A' in rooms['centre']:
             room_a.A_room_screen(screen,girl_A,diary_font,dialogue_font)
+            
+            
 
             if girl_A.feet_hitbox().colliderect(backroom_A_rect) and 'centre' in rooms['A']:
                 current_state = 'game'
                 girl.set_position(410,160)
-            if room_a.diary_open == False:
+            if room_a.A_room_story == False and room_a.diary_open == False:
                 girl_A.movement(A_walkable)
                 girl_A.graphic(screen)
         

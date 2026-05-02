@@ -101,23 +101,23 @@ class A_room():
         self.books = [('Economics',2001),("Astronomy", 2004),
                       ('Mathematics',2013),("Fantasy", 1995), ('Computer Science',2006),
                       ("History", 1978),('Biography',1997),("Romance", 1982)]
-        self.bookshelves_rect = [pygame.Rect(360, 230, 90, 100), pygame.Rect(480, 230, 90, 100), 
-                                 pygame.Rect(660, 230, 90, 100), pygame.Rect(780, 230, 90, 100),  
-                                 pygame.Rect(360, 360, 90, 90), pygame.Rect(480, 360, 90, 90),  
-                                 pygame.Rect(660, 360, 90, 90), pygame.Rect(780, 360, 90, 90)]
+        self.bookshelves_rect = [pygame.Rect(360, 320, 90, 30), pygame.Rect(480, 320, 90, 30), 
+                                 pygame.Rect(660, 320, 90, 30), pygame.Rect(780, 320, 90, 30),  
+                                 pygame.Rect(360, 440, 90, 30), pygame.Rect(480, 440, 90, 30),  
+                                 pygame.Rect(660, 440, 90, 30), pygame.Rect(780, 440, 90, 30)]
         
         self.genres = ['Economics', 'Astronomy','Mathematics','Fantasy',
                        'Computer Science','History','Biography','Romance']
         
-        self.diary_rect = pygame.Rect((595,340,40,40))
+        self.diary_rect = pygame.Rect((590,340,50,50))
         self.diary_open = False
         self.diary_page = 0
-        self.diary_texts = ['I loved reading books in the library.',
-               'Reading about the Second World War\nwas helpful for my history class at school.',
-               'I wished I could use spells and magic\nlike the wizards in Harry Potter.', 
-               'I often wondered what it would be like to\ntravel through space and discover new planets.',
-               'I cried after reading tragic romance stories\nlike Romeo and Juliet. It broke my heart.',
-               'My grandfather always told me,\n"The order of the years hides the truth."']
+        self.diary_texts = ['I loved reading books\nin the library.',
+               'Reading about the\nSecond World War\nwas helpful for\nmy history class\nat school.',
+               'I wished I could use\nspells and magic\nlike the wizards\nin Harry Potter.', 
+               'I often imagined\ntravelling through\nspace and discovering\nnew planets.',
+               'I cried after reading\ntragic romance stories\nlike Romeo and Juliet.\nIt broke my heart.',
+               'My grandfather always\ntold me,\n"The order of the\nyears hides the truth."']
         
         self.books_finding = {'History': "You found a History book.",
                           'Romance': "You found a Romance book.",
@@ -127,11 +127,11 @@ class A_room():
                           'Mathematics': "You found a Mathematics book.",
                           'Computer Science': "You found a Computer Science book.",
                           'Economics': "You found an Economics book."}
-        self.finding_index = 0
         self.inventory_open = False
         self.inventory = []
 
-        self.storylines = ["There is a book on the floor. Let's check it out!",
+        self.A_room_story = True
+        self.storylines = ["There is a book on the floor.",
                            "Press F near that book and press Q or E to turn the pages.",
                            "Hmm...","It looks like a diary.",
                            "This can be the clue for finding the key.",
@@ -140,6 +140,7 @@ class A_room():
                            "The third book was about the space.",
                            "The last book was about romance.",
                            "I need to find those books in the bookshelves."]
+        self.A_room_story_index = 0
         
     def event(self,event,character):
         if event.type == pygame.KEYDOWN:
@@ -154,6 +155,19 @@ class A_room():
                         if stored_books not in self.inventory:
                             self.inventory.append(stored_books)
                             self.find_books = self.books_finding[genre]
+            
+            if event.key == pygame.K_SPACE:
+                if self.A_room_story == True:
+                    self.A_room_story_index += 1
+                    if self.A_room_story_index >= 2:
+                        self.A_room_story = False
+
+
+            
+            if event.key == pygame.K_i:
+                self.inventory_open = True
+
+
             if self.diary_open == True:
                 if event.key == pygame.K_e:
                     self.diary_page += 1
@@ -163,20 +177,12 @@ class A_room():
                     self.diary_page -= 1
                     if self.diary_page < 0:
                         self.diary_page = 0
-            if event.key == pygame.K_SPACE:
-                self.finding_index += 1
-                if self.finding_index >= len(self.books_finding):
-                    current_state = 'game'
-                    current_room = 'centre'
-               
-            if event.key == pygame.K_i:
-                self.inventory_open = True
-
 
             if event.key == pygame.K_ESCAPE:
                 self.diary_open = False
                 self.diary_page = 0
                 self.inventory_open = False
+            
             
 
     def A_room_screen(self,screen,character,diary_font,dialogue_font):
@@ -186,12 +192,21 @@ class A_room():
         screen.blit(self.bookshelf,(630,200))
         screen.blit(self.diary,(600,350))
         screen.blit(self.fireplace,(565,110))
-
         
+
+        if self.A_room_story == True:
+            A_room_story_box = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            A_room_story_text = dialogue_font.render(self.storylines[self.A_room_story_index],True,'black')
+            A_room_story_rect = A_room_story_text.get_rect(center= A_room_story_box.center)
+            screen.blit(A_room_story_text, A_room_story_rect)
+            
+
         if self.diary_open == True:
-            pygame.draw.rect(screen, 'white', (420, 120, 400, 400))
-            self.diary_inside = diary_font.render(self.diary_texts[self.diary_page], True, 'black')
-            screen.blit(self.diary_inside, (440,160))
+            pygame.draw.rect(screen, 'white', (410, 120, 400, 400))
+            newline = self.diary_texts[self.diary_page].split('\n')
+            for i in range(len(newline)):
+                self.diary_inside = dialogue_font.render(newline[i], True, 'black')
+                screen.blit(self.diary_inside, (420,170 + i * 50))
 
         if self.inventory_open == True:
             pygame.draw.rect(screen,'white',(30,200,300,300))
@@ -203,10 +218,13 @@ class A_room():
         if self.inventory:
             found_books = self.inventory[-1]
             books_genre = found_books[0]
-            finding_books_rect = pygame.draw.rect(screen, 'white', (280,550,700,80))
+            finding_books_rect = pygame.draw.rect(screen, 'white', (280,620,700,80))
             finding_texts = dialogue_font.render("You found a " + books_genre + " book.", True, 'black')
             finding_rect = finding_texts.get_rect(center = finding_books_rect.center)
             screen.blit(finding_texts,finding_rect)
+
+
+
 
     def linear_search_books(self,genre):
         for i in range(len(self.books)):
