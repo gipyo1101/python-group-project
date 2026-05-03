@@ -149,10 +149,10 @@ class A_room():
         self.after_bookshelves_storylines = ['Oh! These books match what the diary said.',
                                              'I found all the books mentioned in the diary.',
                                              'The diary said, "The order of the years hides the truth."',
-                                             'Maybe I should arrange these books by ordered years.']
+                                             'Maybe I should arrange these books in chronological order.']
         self.after_bookshelves_index = 0
         self.before_desk_story = False
-        self.before_desk_storylines = ['The inventory has been sorted by ordered years.',
+        self.before_desk_storylines = ['The books in the inventory have been sorted by year.',
                                        'Oh! There is a desk behind the bookshelves.',
                                        'Maybe there is a clue of password with these books.',
                                        "Let's go there."]
