@@ -96,7 +96,7 @@ class A_room():
         self.wall = wall
         self.bookshelf = bookshelf
         self.diary = diary
-        self.desk = desk  
+        self.desk = desk 
         self.books = [('Economics',2001),("Astronomy", 2004),
                       ('Mathematics',2013),("Fantasy", 1995), ('Computer Science',2006),
                       ("History", 1978),('Biography',1997),("Romance", 1982)]
@@ -152,11 +152,12 @@ class A_room():
                                              'Maybe I should arrange these books by ordered years.']
         self.after_bookshelves_index = 0
         self.before_desk_story = False
-        self.before_desk_storylines = ['The inventory has sorted by ordered years.',
+        self.before_desk_storylines = ['The inventory has been sorted by ordered years.',
                                        'Oh! There is a desk behind the bookshelves.',
                                        'Maybe there is a clue of password with these books.',
                                        "Let's go there."]
         self.before_desk_index = 0
+        self.desk_rect = pygame.Rect(560, 150, 110, 60)
         
     def event(self,event,character):
         if event.type == pygame.KEYDOWN:

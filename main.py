@@ -22,9 +22,9 @@ exit_floor = get_exit_floor(floor)
 centre_wall = get_centre_wall(wall)
 exit_wall = get_exit_wall(wall)
 A_room_wall = get_A_room_wall(wall)
-B_room_wall = get_A_room_wall(wall) # fajr 
+B_room_wall = get_B_room_wall(wall) # fajr 
 C_room_wall = get_centre_wall(wall) # fajr
-room_a = A_room(A_room_floor, A_room_wall, bookshelf, diary, desk)
+
 #gipyo
 
 #gipyo
@@ -45,6 +45,7 @@ menu_background = pygame.transform.scale(menu_background, (1280, 720))
 rooms = {'centre':['A','B','C','exit'], 'A':['centre','C'],
                 'B':['centre'], 'C':['centre','A'], 'exit':['centre']}
 current_room = 'centre'
+room_a = A_room(A_room_floor, A_room_wall, bookshelf, diary, desk)
 room_A_rect = pygame.Rect(420, 130, 30, 40)
 backroom_A_rect = pygame.Rect(590, 600, 55, 30)
 bookshelf_1_rect = pygame.Rect(360, 320, 90, 30)
@@ -55,6 +56,7 @@ bookshelf_5_rect = pygame.Rect(360, 450, 90, 30)
 bookshelf_6_rect = pygame.Rect(480, 450, 90, 30)
 bookshelf_7_rect = pygame.Rect(660, 450, 90, 30)
 bookshelf_8_rect = pygame.Rect(780, 450, 90, 30)
+desk1_rect = pygame.Rect(553, 110, 170, 110)
 #gipyo
 
 #Hashim
@@ -74,9 +76,18 @@ centre_walkable = [
 A_walkable = [
     pygame.Rect(350, 160, 528, 400),   # main room A floor
     pygame.Rect(595, 560, 44, 40),     # bottom doorway
-    pygame.Rect(878, 320, 60, 60),     # right side extension
+    pygame.Rect(878, 320, 60, 60),    # right side extension
 ]
-
+A_obstacle = [pygame.Rect(360, 230, 90, 90), # bookshelf 1
+              pygame.Rect(480, 230, 90, 90), # bookshelf 2
+              pygame.Rect(660, 230, 90, 90), # bookshelf 3
+              pygame.Rect(780, 230, 90, 90), # bookshelf 4
+              pygame.Rect(360, 360, 90, 90), # bookshelf 5
+              pygame.Rect(480, 360, 90, 90), # bookshelf 6
+              pygame.Rect(660, 360, 90, 90), # bookshelf 7
+              pygame.Rect(780, 360, 90, 90), # bookshelf 8
+              pygame.Rect((600,350,30,20)),   # diary
+              pygame.Rect(565, 140, 100, 50)] # desk
 B_walkable = [
     pygame.Rect(350, 160, 528, 400),   # main room B floor
     pygame.Rect(595, 150, 44, 40),     # top doorway
@@ -240,13 +251,14 @@ while running:
                 and room_a.after_diary_story == False 
                 and room_a.after_bookshelves_story == False 
                 and room_a.diary_open == False
-                and room_a.before_desk_story == False):
-                girl_A.movement(A_walkable)    
+                and room_a.before_desk_story == False): 
+                girl_A.movement(A_walkable,A_obstacle)    
             girl_A.graphic(screen)
         
             for area in A_walkable:
                 #pygame.draw.rect(screen, 'green', area, 2)
                 #pygame.draw.rect(screen, 'blue', backroom_A_rect, 2)
+                pygame.draw.rect(screen,'blue',room_a.desk_rect,2)
                 pygame.draw.rect(screen,'blue',room_a.diary_rect,2)
                 pygame.draw.rect(screen, 'purple', girl_A.feet_hitbox(), 2)
                 pygame.draw.rect(screen, 'blue', bookshelf_1_rect, 2)
@@ -257,6 +269,17 @@ while running:
                 pygame.draw.rect(screen, 'blue', bookshelf_6_rect, 2)
                 pygame.draw.rect(screen, 'blue', bookshelf_7_rect, 2)
                 pygame.draw.rect(screen, 'blue', bookshelf_8_rect, 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[0], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[1], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[2], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[3], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[4], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[5], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[6], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[7], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[8], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[9], 2)
+
     #gipyo
                
 
