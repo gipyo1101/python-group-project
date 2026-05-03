@@ -96,19 +96,17 @@ class A_room():
         self.wall = wall
         self.bookshelf = bookshelf
         self.diary = diary
-        self.desk = desk
-        
+        self.desk = desk  
         self.books = [('Economics',2001),("Astronomy", 2004),
                       ('Mathematics',2013),("Fantasy", 1995), ('Computer Science',2006),
                       ("History", 1978),('Biography',1997),("Romance", 1982)]
         self.bookshelves_rect = [pygame.Rect(360, 320, 90, 30), pygame.Rect(480, 320, 90, 30), 
                                  pygame.Rect(660, 320, 90, 30), pygame.Rect(780, 320, 90, 30),  
-                                 pygame.Rect(360, 440, 90, 30), pygame.Rect(480, 440, 90, 30),  
-                                 pygame.Rect(660, 440, 90, 30), pygame.Rect(780, 440, 90, 30)]
+                                 pygame.Rect(360, 450, 90, 30), pygame.Rect(480, 450, 90, 30),  
+                                 pygame.Rect(660, 450, 90, 30), pygame.Rect(780, 450, 90, 30)]
         
         self.genres = ['Economics', 'Astronomy','Mathematics','Fantasy',
-                       'Computer Science','History','Biography','Romance']
-        
+                       'Computer Science','History','Biography','Romance']       
         self.diary_rect = pygame.Rect((590,340,50,50))
         self.diary_open = False
         self.diary_page = 0
@@ -119,7 +117,7 @@ class A_room():
                'I cried after reading\ntragic romance stories\nlike Romeo and Juliet.\nIt broke my heart.',
                'My grandfather always\ntold me,\n"The order of the\nyears hides the truth."']
         self.diary_check = False
-        
+        self.books_check = False
         self.books_finding = {'History': "You found a History book.",
                           'Romance': "You found a Romance book.",
                           'Fantasy': "You found a Fantasy book.",
@@ -130,20 +128,35 @@ class A_room():
                           'Economics': "You found an Economics book."}
         self.inventory_open = False
         self.inventory = []
-
-        self.A_room_story = True
-        self.storylines = ["There is a book on the floor.",
+        self.before_diary_story = True
+        self.before_diary_storylines = ["There is a book on the floor.",
                            "Press F near that book and press Q or E to turn the pages.",
-                           'Press ESC to close the diary after reading it.',
-                           "Hmm...","It looks like a diary.",
+                           'Press ESC to close the diary after reading it.']
+        self.before_diary_index = 0
+        self.after_diary_story = False
+        self.after_diary_storylines = ["Hmm...","It looks like a diary.",
                            "This can be the clue for finding the key.",
                            "The first book was related to history.",
                            "The second book was about magic and fantasy.",
                            "The third book was about the space.",
                            "The last book was about romance.",
                            "Hmm... there are 8 bookshelves in this room.",
-                           "Oh! This must be the clue!"]
-        self.A_room_story_index = 0
+                           "Oh! This must be the clue!",
+                           "Press F near the bookshelves.",
+                           "Press I to open and close the inventory."]
+        self.after_diary_index = 0
+        self.after_bookshelves_story = False
+        self.after_bookshelves_storylines = ['Oh! These books match what the diary said.',
+                                             'I found all the books mentioned in the diary.',
+                                             'The diary said, "The order of the years hides the truth."',
+                                             'Maybe I should arrange these books by ordered years.']
+        self.after_bookshelves_index = 0
+        self.before_desk_story = False
+        self.before_desk_storylines = ['The inventory has sorted by ordered years.',
+                                       'Oh! There is a desk behind the bookshelves.',
+                                       'Maybe there is a clue of password with these books.',
+                                       "Let's go there."]
+        self.before_desk_index = 0
         
     def event(self,event,character):
         if event.type == pygame.KEYDOWN:
@@ -158,26 +171,38 @@ class A_room():
                         if stored_books not in self.inventory:
                             self.inventory.append(stored_books)
                             self.find_books = self.books_finding[genre]
+                            if len(self.inventory) == 8 and self.after_bookshelves_story == False:
+                                self.after_bookshelves_story = True
+                                self.books_check = True
             
             if event.key == pygame.K_SPACE:
-                if self.A_room_story == True:
-                    self.A_room_story_index += 1               
-                    if self.diary_check == False:
-                        if self.A_room_story_index >= 3:
-                            self.A_room_story = False
-                    
-                    else:
-                        if self.A_room_story_index >= len(self.storylines):
-                            self.A_room_story = False
-                
+                if self.before_diary_story == True:
+                    self.before_diary_index += 1 
+                    if self.before_diary_index >= len(self.before_diary_storylines):
+                        self.before_diary_story = False 
 
+                elif self.after_diary_story == True:
+                    self.after_diary_index += 1    
+                    if self.after_diary_index >= len(self.after_diary_storylines):
+                        self.after_diary_story = False   
+
+                elif self.after_bookshelves_story == True:
+                    self.after_bookshelves_index += 1
+                    if self.after_bookshelves_index >= len(self.after_bookshelves_storylines):
+                        self.after_bookshelves_story = False 
+                        self.inventory= self.bubble_sort_years(self.inventory)
+                        self.before_desk_story = True
+
+                elif self.before_desk_story == True:
+                    self.before_desk_index += 1
+                    if self.before_desk_index >= len(self.before_desk_storylines):
+                        self.before_desk_story = False
             
             if event.key == pygame.K_i:
                 if self.inventory_open == False:
                     self.inventory_open = True
                 else:
                     self.inventory_open = False
-
 
             if self.diary_open == True:
                 if event.key == pygame.K_e:
@@ -194,11 +219,7 @@ class A_room():
                     self.diary_page = 0
                     if self.diary_check == False:
                         self.diary_check = True
-                        self.A_room_story = True
-                        self.A_room_story_index = 3
-
-            
-            
+                        self.after_diary_story = True
 
     def A_room_screen(self,screen,character,diary_font,dialogue_font):
         screen.blit(self.floor,(350,160))
@@ -209,11 +230,17 @@ class A_room():
         screen.blit(self.desk,(553,110))
         
 
-        if self.A_room_story == True:
-            A_room_story_box = pygame.draw.rect(screen, 'white', (130,620,1000,80))
-            A_room_story_text = dialogue_font.render(self.storylines[self.A_room_story_index],True,'black')
-            A_room_story_rect = A_room_story_text.get_rect(center= A_room_story_box.center)
-            screen.blit(A_room_story_text, A_room_story_rect)
+        if self.before_diary_story == True:
+            story_box_1 = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            story_text_1 = dialogue_font.render(self.before_diary_storylines[self.before_diary_index],True,'black')
+            story_rect_1 = story_text_1.get_rect(center= story_box_1.center)
+            screen.blit(story_text_1, story_rect_1)
+
+        if self.after_diary_story == True:
+            story_box_2 = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            story_text_2 = dialogue_font.render(self.after_diary_storylines[self.after_diary_index],True,'black')
+            story_rect_2 = story_text_2.get_rect(center= story_box_2.center)
+            screen.blit(story_text_2, story_rect_2)
             
 
         if self.diary_open == True:
@@ -230,7 +257,7 @@ class A_room():
                 inventory_text = diary_font.render(title_year,True,'black')
                 screen.blit(inventory_text,(50,220+ i * 30))
 
-        if self.inventory:
+        if self.inventory and self.books_check == False:
             found_books = self.inventory[-1]
             books_genre = found_books[0]
             finding_books_rect = pygame.draw.rect(screen, 'white', (280,620,700,80))
@@ -239,14 +266,22 @@ class A_room():
             screen.blit(finding_texts,finding_rect)
 
 
+        if self.after_bookshelves_story == True:
+            story_box_3 = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            story_text_3 = dialogue_font.render(self.after_bookshelves_storylines[self.after_bookshelves_index],True,'black')
+            story_rect_3 = story_text_3.get_rect(center= story_box_3.center)
+            screen.blit(story_text_3, story_rect_3)
 
-
+        if self.before_desk_story == True:
+            story_box_4 = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            story_text_4 = dialogue_font.render(self.before_desk_storylines[self.before_desk_index],True,'black')
+            story_rect_4 = story_text_4.get_rect(center= story_box_4.center)
+            screen.blit(story_text_4, story_rect_4)
     def linear_search_books(self,genre):
         for i in range(len(self.books)):
             if genre == self.books[i][0]:
                 return self.books[i]
         return None
-
 
     def bubble_sort_years(self,books):
         repeated_nums = len(books) - 1
@@ -263,10 +298,6 @@ class A_room():
         books_list = self.bubble_sort_years(books)
         password = ''.join(str(year)[-1] for pw, year in books_list)
         return password
-    
-    
 
-        
-    
         
 #gipyo
