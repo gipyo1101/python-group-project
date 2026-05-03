@@ -1,5 +1,6 @@
 #gipyo
 import pygame
+
 def get_floors():
     floors = pygame.image.load('images/floorswalls_LRK.png').convert_alpha()
     floor = pygame.Surface((44,20), pygame.SRCALPHA)
@@ -29,12 +30,12 @@ def get_diary():
     diary_scale = pygame.transform.scale(diary,(30,20))
     return diary_scale
 
-def get_desk():
+def get_fireplace():
     furniture_set = pygame.image.load('images/furniture set.png').convert_alpha()
-    desk = pygame.Surface((65,65),pygame.SRCALPHA)
-    desk.blit(furniture_set,(0,0),(252,0,65,65))
-    desk_scale = pygame.transform.scale(desk,(110,90))
-    return desk_scale
+    fireplace = pygame.Surface((60,55),pygame.SRCALPHA)
+    fireplace.blit(furniture_set,(0,0),(250,330,60,55))
+    fireplace_scale = pygame.transform.scale(fireplace,(100,95))
+    return fireplace_scale
 
 def get_bookshelf():
     bookshelf_set = pygame.image.load('images/bookshelf_LRK.png').convert_alpha()
@@ -42,4 +43,3 @@ def get_bookshelf():
     bookshelf.blit(bookshelf_set, (0, 0), (0, 0, 134, 126))
     bookshelf_scale = pygame.transform.scale(bookshelf,(250,250))
     return bookshelf_scale
-#gipyo
