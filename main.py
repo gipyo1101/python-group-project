@@ -101,17 +101,18 @@ C_walkable = [
 #Hashim
 
 #gipyo
-centre_up = pygame.Rect(300,50,700,50)
-girl = Character(580,320,1)
+#centre_up = pygame.Rect(300,50,700,50)
+girl = Character(580,320,0.7)
 girl_A = Character(600,530,0.7)
 # gipyo
 
 #Hashim
-girl_B = Character(595,510,1)
-girl_C = Character(595,510,1)
+girl_B = Character(595,510,0.7)
+girl_C = Character(595,510,0.7)
 #Hashim
 
 # fajr
+map_place = pygame.Rect(560, 340, 120, 80)
 piece_count = 0
 map_puzzle_open = False 
 map_puzzle_done = False
@@ -258,7 +259,7 @@ while running:
             for area in A_walkable:
                 #pygame.draw.rect(screen, 'green', area, 2)
                 #pygame.draw.rect(screen, 'blue', backroom_A_rect, 2)
-                pygame.draw.rect(screen,'blue',room_a.desk_rect,2)
+                '''pygame.draw.rect(screen,'blue',room_a.desk_rect,2)
                 pygame.draw.rect(screen,'blue',room_a.diary_rect,2)
                 pygame.draw.rect(screen, 'purple', girl_A.feet_hitbox(), 2)
                 pygame.draw.rect(screen, 'blue', bookshelf_1_rect, 2)
@@ -278,7 +279,7 @@ while running:
                 pygame.draw.rect(screen, 'green', A_obstacle[6], 2)
                 pygame.draw.rect(screen, 'green', A_obstacle[7], 2)
                 pygame.draw.rect(screen, 'green', A_obstacle[8], 2)
-                pygame.draw.rect(screen, 'green', A_obstacle[9], 2)
+                pygame.draw.rect(screen, 'green', A_obstacle[9], 2)'''
 
     #gipyo
                
@@ -327,7 +328,29 @@ while running:
 
     #Hashim
     elif current_state == 'C':
-        screen.blit(C_room_floor,(0,0))
+       # Placeholder room C for now
+        screen.blit(A_room_floor,(350,160))
+        screen.blit(A_room_wall,(350,80))
+
+        # simple placeholder object
+        pygame.draw.rect(screen, 'grey', (570,300,120,80))
+
+        # debug rectangles, remove later
+        for area in C_walkable:
+            pygame.draw.rect(screen, 'green', area, 2)
+
+        pygame.draw.rect(screen, 'blue', backroom_C, 2)
+        pygame.draw.rect(screen, 'purple', girl_C.feet_hitbox(), 2)
+
+        girl_C.movement(C_walkable)
+        girl_C.graphic(screen)
+
+        placeholder_text = dialogue_font.render('Room C placeholder', True, 'white')
+        screen.blit(placeholder_text, (430,620))
+
+        if girl_C.feet_hitbox().colliderect(backroom_C):
+            current_state = 'game'
+            girl.set_position(805,165)
     
         
     pygame.display.flip()
