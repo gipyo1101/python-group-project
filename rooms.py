@@ -60,34 +60,64 @@ def get_exit_wall(wall):
 #gipyo
 
 # Fajr
-def get_B_room_floor(floor):
-    B_floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
+class B_room():
 
-    for x in range(0,500,44):
-        for y in range(0,400,20):
-            B_floor_background.blit(floor,(x,y))
+    def __init__(self, floor, wall, bed, carpet, clock, map_img):
 
-    for x in range(245,275,44):
-        for y in range(400,440,20):
-            B_floor_background.blit(floor,(x,y))
+        self.floor = floor
+        self.wall = wall
+        self.bed = bed
+        self.carpet = carpet
+        self.clock = clock
+        self.map = map_img
 
-    for x in range(500,550,44):
-        for y in range(160,220,20):
-            B_floor_background.blit(floor,(x,y))
+        self.map_rect = pygame.Rect(400, 390, 140, 120)
 
-    return B_floor_background
-def get_B_room_wall(wall):
-    B_wall_background = pygame.Surface((1000,80), pygame.SRCALPHA)
+        self.message_open = False
+        self.message ="What is this? Press SPACE?"
 
-    for x in range(0,500,44):
-        B_wall_background.blit(wall,(x,0))
 
-    return B_wall_background
+    def event(self, event, character):
 
-def get_C_room_floor(floor):
-    C_room_floor = floor.copy()
-    return C_room_floor
+        if event.type == pygame.KEYDOWN:
+
+            if event.key == pygame.K_e:
+
+                if character.feet_hitbox().colliderect(self.map_rect):
+                 
+                 self.message_open = True 
+
+
+    def B_room_screen(self, screen, font):
+
+          B_floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
+          B_wall_background = pygame.Surface((1000,80), pygame.SRCALPHA)
+
+          for x in range(0,500,44):
+           for y in range(0,400,20):
+            B_floor_background.blit(self.floor,(x,y))
+
+          for x in range(245,275,44):
+           for y in range(80,140,20):
+               B_floor_background.blit(self.floor,(x,y))
+          
+           for x in range(0,500,44):
+            B_wall_background.blit(self.wall,(x,0))
+
+          screen.blit(B_floor_background,(350,160))
+          screen.blit(B_wall_background,(350,80))
+          pygame.draw.rect(screen, (193, 140, 92), (595, 80, 44, 80))
+          screen.blit(self.map,(430,430))
+          screen.blit(self.bed,(360,300))
+          
+
+          if self.message_open:
+           pygame.draw.rect(screen,'white',(200,500,800,80))
+           text = font.render(self.message,True,'black')
+           screen.blit(text,(220,520))
 #Fajr
+
+
 
 #gipyo
 class A_room():
