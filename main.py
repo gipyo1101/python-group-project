@@ -112,11 +112,22 @@ girl_C = Character(595,510,0.7)
 #Hashim
 
 # fajr
-map_place = pygame.Rect(560, 340, 120, 80)
+bed_img = pygame.image.load("images/bed.png")
+bed_img = pygame.transform.scale(bed_img, (200, 200))
+bed_img = pygame.transform.rotate(bed_img, 90)
+carpet_img = pygame.image.load("images/carpet.png")
+clock_img = pygame.image.load("images/clock.png")
+map_img = pygame.image.load("images/map.png")
+map_img = pygame.transform.scale(map_img, (60, 45))
+bed_place =pygame.Rect(360, 300, 120, 120)
+
+map_place = pygame.Rect(410, 430, 60, 45)
 piece_count = 0
 map_puzzle_open = False 
 map_puzzle_done = False
 map_message = ''
+map_place = pygame.Rect(555, 255, 80, 30)
+room_b = B_room(floor, wall, bed_img, carpet_img, clock_img, map_img)
 # fajr
                 
 # gipyo
@@ -153,30 +164,41 @@ while running:
         if event.type == pygame.KEYDOWN:
             if current_state == 'A':
                 room_a.event(event,girl_A)
-                
-                
-            #Fajr
-            if current_state == 'B': 
-                if event.key == pygame.K_e:
-                    if girl_A.player.colliderect(map_place):
-                        map__puzzle_open = True
-                        count = 0
-                        text = 'NEW TEXT TEST'
-                        if event.key == pygame.K_SPACE and map__puzzle_open:
-                            count += 1
-                
-                        if count == 1:
-                            text = 'First piece placed.'
-                
-                        elif count == 2:
-                            text = 'The picture looks clearer.'
-               
-                        elif count == 3:
-                            text = 'It looks like a map.'
-                
-                        elif count >= 4:
-                            text = 'X mark found. The number is 4.'
 
+        if event.type == pygame.KEYDOWN: 
+             if current_state == 'B': # Fajr
+                    room_b.event(event, girl_B)
+
+                    if event.key == pygame.K_e:
+                            map_puzzle_open = True
+                            room_b.message_open = True
+                            if not map_puzzle_done:
+                                map_message = 'What is this? Press SPACE.'
+                                room_b.message = map_message
+
+                    if event.key == pygame.K_SPACE and room_b.message_open and not map_puzzle_done:
+                     piece_count += 1
+
+                    if piece_count == 1:
+                        map_message = 'I need to take a closer look.'
+                        room_b.message = map_message
+
+                    elif piece_count == 2:
+                        map_message = 'The picture looks clearer.'
+                        room_b.message = map_message
+                        
+
+                    elif piece_count == 3:
+                        map_message = 'It looks like a map.'
+                        room_b.message = map_message
+
+                    elif piece_count >= 4:
+                        map_puzzle_done = True
+                        map_message = 'X mark found. The number is 4.'
+                        room_b.message = map_message
+                        #fajr
+                
+            
     #gipyo
     if current_state == 'menu':
         screen.blit(menu_background,(0,0))
@@ -282,50 +304,18 @@ while running:
                 pygame.draw.rect(screen, 'green', A_obstacle[9], 2)'''
 
     #gipyo
-               
 
-       
-
-    # Fajr
+  
+   # Fajr
     elif current_state == 'B':
-        screen.blit(B_room_floor, (350, 160))
-        screen.blit(B_room_wall, (350, 80))
+     room_b.B_room_screen(screen, dialogue_font)
+     girl_B.movement(B_walkable, [bed_place])
+     girl_B.graphic(screen)
 
-        pygame.draw.rect(screen, 'brown', map_place) 
-
-        old_x = girl_A.x
-        old_y = girl_A.y
-
-        girl_A.movement()
-
-        main_room = pygame.Rect(430, 160, 430, 370)
-
-        in_main = girl_A.player.colliderect(main_room)
-
-        if not in_main:
-            girl_A.x = old_x
-            girl_A.y = old_y
-
-        if girl_A.player.colliderect(map_place):
-            girl_A.x = old_x
-            girl_A.y = old_y
-
-        if girl_A.player.colliderect(map_place):
-            map_puzzle_open = True
-            text = 'You found a torn picture. Press SPACE to put the pieces together.'
-
-        if map_puzzle_open:
-            pygame.draw.rect(screen, 'white', (200, 500, 800, 80))
-            msg = dialogue_font.render(text, True, 'black')
-            screen.blit(msg, (220, 520))
-
-        if girl_A.player.colliderect(backroom_B):
-            current_state = 'game'
-            girl.x = 580
-            girl.y = 140
-
-        girl_A.graphic(screen)
-
+    if girl_B.feet_hitbox().colliderect(backroom_B):
+        current_state = 'game'
+        girl_B.set_position(410, 485)
+            
     #Hashim
     elif current_state == 'C':
        # Placeholder room C for now
