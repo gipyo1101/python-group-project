@@ -59,65 +59,6 @@ def get_exit_wall(wall):
     return exit_wall_background
 #gipyo
 
-# Fajr
-class B_room():
-
-    def __init__(self, floor, wall, bed, carpet, clock, map_img):
-
-        self.floor = floor
-        self.wall = wall
-        self.bed = bed
-        self.carpet = carpet
-        self.clock = clock
-        self.map = map_img
-
-        self.map_rect = pygame.Rect(400, 390, 140, 120)
-
-        self.message_open = False
-        self.message ="What is this? Press SPACE?"
-
-
-    def event(self, event, character):
-
-        if event.type == pygame.KEYDOWN:
-
-            if event.key == pygame.K_e:
-
-                if character.feet_hitbox().colliderect(self.map_rect):
-                 
-                 self.message_open = True 
-
-
-    def B_room_screen(self, screen, font):
-
-          B_floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
-          B_wall_background = pygame.Surface((1000,80), pygame.SRCALPHA)
-
-          for x in range(0,500,44):
-           for y in range(0,400,20):
-            B_floor_background.blit(self.floor,(x,y))
-
-          for x in range(245,275,44):
-           for y in range(80,140,20):
-               B_floor_background.blit(self.floor,(x,y))
-          
-           for x in range(0,500,44):
-            B_wall_background.blit(self.wall,(x,0))
-
-          screen.blit(B_floor_background,(350,160))
-          screen.blit(B_wall_background,(350,80))
-          pygame.draw.rect(screen, (193, 140, 92), (595, 80, 44, 80))
-          screen.blit(self.map,(430,430))
-          screen.blit(self.bed,(360,300))
-          
-
-          if self.message_open:
-           pygame.draw.rect(screen,'white',(200,500,800,80))
-           text = font.render(self.message,True,'black')
-           screen.blit(text,(220,520))
-#Fajr
-
-
 
 #gipyo
 class A_room():
@@ -185,15 +126,24 @@ class A_room():
         self.before_desk_storylines = ['The books in the inventory have been sorted by year.',
                                        'Oh! There is a desk behind the bookshelves.',
                                        'Maybe there is a clue of password with these books.',
-                                       "Let's go there."]
+                                       "Let's go there.",
+                                       "Press F near the desk.",
+                                       "Press Enter to enter the password."]
         self.before_desk_index = 0
         self.desk_rect = pygame.Rect(560, 150, 110, 60)
+        self.desk_check = False
+        self.desk_input = ""
+        self.after_desk_check = False
+        self.password = '7'
         
     def event(self,event,character):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_f:
                 if character.feet_hitbox().colliderect(self.diary_rect):
                     self.diary_open = True
+                
+                if character.feet_hitbox().colliderect(self.desk_rect):
+                    self.desk_check = True
                 
                 for order in range (len(self.bookshelves_rect)):
                     if character.feet_hitbox().colliderect(self.bookshelves_rect[order]):
@@ -251,6 +201,23 @@ class A_room():
                     if self.diary_check == False:
                         self.diary_check = True
                         self.after_diary_story = True
+            
+            if self.desk_check == True:
+                if event.key >= pygame.K_0 and event.key <= pygame.K_9:
+                    if len(self.desk_input) < 4:
+                        self.desk_input += event.unicode
+
+                if event.key == pygame.K_BACKSPACE:
+                    self.desk_input = self.desk_input[:-1]
+                
+                if event.key == pygame.K_RETURN: # enter key
+                    if self.desk_input == self.get_password(self.inventory):
+                        self.desk_check = False
+                        self.after_desk_check = True
+                    else:
+                        self.desk_input = ""
+
+
 
     def A_room_screen(self,screen,character,diary_font,dialogue_font):
         screen.blit(self.floor,(350,160))
@@ -308,6 +275,23 @@ class A_room():
             story_text_4 = dialogue_font.render(self.before_desk_storylines[self.before_desk_index],True,'black')
             story_rect_4 = story_text_4.get_rect(center= story_box_4.center)
             screen.blit(story_text_4, story_rect_4)
+
+        if self.desk_check == True:
+            story_box_5 = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            story_text_5 = dialogue_font.render('Take the last digit:',True,'black')
+            screen.blit(story_text_5, (240,645))
+            desk_input_screen = self.desk_input.ljust(4,'_')
+            desk_input_screen = ' '.join(desk_input_screen)
+            desk_input_text = dialogue_font.render(desk_input_screen,True,'black')
+            screen.blit(desk_input_text, (550, 650))
+
+        if self.after_desk_check == True:
+            story_box_6 = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            finding_password_1 = dialogue_font.render('You found a first digit of the exit password: 7',True,'black')
+            story_rect_6 = finding_password_1.get_rect(center= story_box_6.center)
+            screen.blit(finding_password_1,story_rect_6)
+            
+
     def linear_search_books(self,genre):
         for i in range(len(self.books)):
             if genre == self.books[i][0]:
@@ -326,9 +310,57 @@ class A_room():
         return books
         
     def get_password(self,books):
-        books_list = self.bubble_sort_years(books)
+        clue_genre = ('History','Fantasy','Astronomy','Romance')
+        books_for_password = []
+        for book in books:
+            if book[0] in clue_genre:
+                books_for_password.append(book)
+        books_list = self.bubble_sort_years(books_for_password)
         password = ''.join(str(year)[-1] for pw, year in books_list)
         return password
-
-        
 #gipyo
+
+# Fajr
+class B_room():
+    def __init__(self, floor, wall, bed, map_img):
+        self.floor = floor
+        self.wall = wall
+        self.bed = bed
+        self.map = map_img
+        self.map_rect = pygame.Rect(400, 390, 140, 120)
+        self.message_open = False
+        self.message ="What is this? Press SPACE?"
+    
+    def event(self, event, character):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                if character.feet_hitbox().colliderect(self.map_rect):
+                    self.message_open = True 
+    
+    def B_room_screen(self, screen, font):
+        B_floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
+        B_wall_background = pygame.Surface((1000,80), pygame.SRCALPHA)
+        for x in range(0,500,44):
+           for y in range(0,400,20):
+                B_floor_background.blit(self.floor,(x,y))
+
+           for x in range(245,275,44):
+                for y in range(80,140,20):
+                    B_floor_background.blit(self.floor,(x,y))
+          
+           for x in range(0,500,44):
+                B_wall_background.blit(self.wall,(x,0))
+
+
+        screen.blit(B_floor_background,(350,160))
+        screen.blit(B_wall_background,(350,80))
+        pygame.draw.rect(screen, (193, 140, 92), (595, 80, 44, 80))
+        screen.blit(self.map,(430,430))
+        screen.blit(self.bed,(360,300))
+    
+        if self.message_open:
+           pygame.draw.rect(screen,'white',(200,500,800,80))
+           text = font.render(self.message,True,'black')
+           screen.blit(text,(220,520))
+
+#Fajr
