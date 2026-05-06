@@ -376,21 +376,17 @@ while running:
             girl.set_position(805,165)
     #Hashim
 
+    #Fajr
     if current_state != 'menu' and current_state != 'story':
         timer = dialogue_font.render("timer: " + str(remaining_time), True, "white")
         screen.blit(timer, ((1100, 50)))
-
-    #Fajr
-    if remaining_time <= 0 and current_state != 'menu' and current_state != 'story':
-        game_over = title_font.render("GAME OVER", True, "red")
-        screen.blit(game_over, (420, 300))
-        pygame.display.update()
-        pygame.time.delay(2000)
-        running = False
-    #Fajr
-
-    
-
+        if remaining_time <= 0:
+            game_over = title_font.render("GAME OVER", True, "red")
+            screen.blit(game_over, (420, 300))
+            pygame.display.update()
+            pygame.time.delay(2000)
+            running = False
+   #Fajr
     pygame.display.flip()
 pygame.quit()
 #gipyo
