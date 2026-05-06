@@ -4,6 +4,7 @@ from rooms import A_room
 from rooms import B_room
 from rooms import get_centre_floor, get_A_room_floor, get_exit_floor, get_centre_wall, get_A_room_wall, get_exit_wall
 from assets import get_doors, get_diary, get_bookshelf, get_desk, get_walls, get_floors
+import time
 
 #gipyo 
 pygame.init()
@@ -141,9 +142,14 @@ story_centre_index = 0
 story_text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
 running = True
+start_time = time.time()#fajr
+time_limit = 60 #fajr
 # gipyo
 
 while running:
+  elsapsed_time = time.time() - start_time#fajr
+    remaining_time = max(0, int(time_limit - elsapsed_time))
+
     screen.fill('black')
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -363,6 +369,25 @@ while running:
         if girl_C.feet_hitbox().colliderect(backroom_C):
             current_state = 'game'
             girl.set_position(805,165)
+          
+          if remaining_time <= 0 and current_state == 'game':#fajr
+
+             game_over = title_font.render("GAME OVER", True, "red")
+             screen.blit(game_over, (420, 300))
+
+            pygame.display.update()
+            pygame.time.delay(2000)
+
+            girl_A.x = 600
+            girl_A.y = 530
+            girl_B.x = 595
+            girl_B.y = 510
+            girl_C.x = 595
+            girl_C.y = 510
+
+            current_room = 'centre'
+
+            start_time = time.time()#fajr
     
         
     pygame.display.flip()
