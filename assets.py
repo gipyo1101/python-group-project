@@ -43,3 +43,73 @@ def get_bookshelf():
     bookshelf_scale = pygame.transform.scale(bookshelf,(250,250))
     return bookshelf_scale
 #gipyo
+
+# Hashim (Room C assets)
+ROOM_C_SIZE = (705, 530)
+
+def get_c_image(filename, size=None, remove_white=True):
+    image = pygame.image.load("images/" + filename).convert_alpha()
+
+    if remove_white:
+        image.set_colorkey((255, 255, 255))
+
+    if size is not None:
+        image = pygame.transform.scale(image, size)
+
+        if remove_white:
+            image.set_colorkey((255, 255, 255))
+
+    return image
+
+
+def get_c_loop_room():
+    image = pygame.image.load("images/c_loop_room.png").convert_alpha()
+    image = pygame.transform.scale(image, ROOM_C_SIZE)
+    return image
+
+
+def get_c_final_room():
+    image = pygame.image.load("images/c_final_room.png").convert_alpha()
+    image = pygame.transform.scale(image, ROOM_C_SIZE)
+    return image
+
+
+def get_c_screen_blank():
+    return get_c_image("c_screen_blank.png", (80, 48))
+
+
+def get_c_screen_left():
+    return get_c_image("c_screen_left.png", (80, 48))
+
+
+def get_c_screen_up():
+    return get_c_image("c_screen_up.png", (80, 48))
+
+
+def get_c_screen_right():
+    return get_c_image("c_screen_right.png", (80, 48))
+
+
+def get_c_button_blank():
+    return get_c_image("c_button_blank.png", (75, 52))
+
+
+def get_c_button_left():
+    return get_c_image("c_button_left.png", (75, 52))
+
+
+def get_c_button_up():
+    return get_c_image("c_button_up.png", (75, 52))
+
+
+def get_c_button_right():
+    return get_c_image("c_button_right.png", (75, 52))
+
+
+def get_c_large_screen_blank():
+    return get_c_image("c_large_screen_blank.png", (215, 95))
+
+
+def get_c_large_screen_3():
+    return get_c_image("c_large_screen_3.png", (215, 95))
+# Hashim

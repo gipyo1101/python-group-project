@@ -362,5 +362,379 @@ class B_room():
            pygame.draw.rect(screen,'white',(200,500,800,80))
            text = font.render(self.message,True,'black')
            screen.blit(text,(220,520))
-
 #Fajr
+
+#Hashim
+class C_room():
+    def __init__(self, loop_room, final_room, screen_images, button_images, large_screen_images):
+        self.loop_room = loop_room
+        self.final_room = final_room
+
+        # Kept so main.py does not need major changes.
+        self.screen_images = screen_images
+        self.button_images = button_images
+        self.large_screen_images = large_screen_images
+
+        self.current_c_room = "C_start"
+        self.solved = False
+        self.exit_ready = False
+
+        # Room C is now drawn at the same kind of scale as the rest of the game.
+        self.room_x = 270
+        self.room_y = 75
+        self.room_w = 705
+        self.room_h = 530
+
+        # Safe spawn point inside Room C
+        self.spawn_x = self.room_x + 350
+        self.spawn_y = self.room_y + 360
+
+        # Directed graph for the looping-door puzzle
+        self.c_graph = {
+            "C_start": {
+                "left": "C_start",
+                "middle": "C_start",
+                "right": "C_one"
+            },
+            "C_one": {
+                "left": "C_two",
+                "middle": "C_start",
+                "right": "C_start"
+            },
+            "C_two": {
+                "left": "C_start",
+                "middle": "C_final",
+                "right": "C_start"
+            },
+            "C_final": {}
+        }
+
+        # DFS finds the correct route through the graph
+        self.correct_path = self.find_path_to_final_room(self.c_graph, "C_start", "C_final")
+
+        self.player_sequence = []
+        self.message = "The first echo moves away. Press F near a door."
+
+        # Door rectangles in the looping room
+        self.left_door_rect = pygame.Rect(self.room_x + 100, self.room_y + 110, 100, 85)
+        self.middle_door_rect = pygame.Rect(self.room_x + 305, self.room_y + 110, 100, 85)
+        self.right_door_rect = pygame.Rect(self.room_x + 505, self.room_y + 110, 100, 85)
+
+        # Bottom door back to centre room
+        self.backroom_rect = pygame.Rect(self.room_x + 310, self.room_y + 480, 85, 35)
+
+        # Final chamber button rectangles.
+        # These are larger than the visual buttons so the player can stand near them and press E.
+        self.button_rects = {
+            "left": pygame.Rect(self.room_x + 190, self.room_y + 245, 105, 110),
+            "middle": pygame.Rect(self.room_x + 300, self.room_y + 245, 105, 110),
+            "right": pygame.Rect(self.room_x + 410, self.room_y + 245, 105, 110)
+        }
+
+        # Where the top-screen arrow overlays should appear.
+        # These are aligned to the black screens in the top monitor row.
+        self.screen_overlay_rects = {
+            "left": pygame.Rect(self.room_x + 330, self.room_y + 165, 42, 24),
+            "middle": pygame.Rect(self.room_x + 437, self.room_y + 165, 42, 24),
+            "right": pygame.Rect(self.room_x + 225, self.room_y + 165, 42, 24)
+
+        }
+
+        # Where the button arrow overlays should appear.
+        # These are aligned to the cream button faces.
+        self.button_overlay_rects = {
+            "left": pygame.Rect(self.room_x + 223, self.room_y + 243, 44, 28),
+            "middle": pygame.Rect(self.room_x + 330, self.room_y + 247, 44, 28),
+            "right": pygame.Rect(self.room_x + 437, self.room_y + 243, 44, 28)
+        }
+
+        # Where the final digit overlay should appear.
+        # This is centred on the large screen.
+        self.large_screen_digit_rect = pygame.Rect(self.room_x + 312, self.room_y + 304, 82, 82)
+
+        # Room C movement area
+        self.walkable = [
+            pygame.Rect(self.room_x + 40, self.room_y + 185, self.room_w - 80, 300),
+            pygame.Rect(self.room_x + 310, self.room_y + 455, 85, 60)
+        ]
+
+        # Set this to False after testing.
+        self.debug_interactions = False
+
+    def enter_room(self):
+        self.exit_ready = False
+
+        if self.solved == False:
+            self.current_c_room = "C_start"
+            self.player_sequence = []
+            self.message = "The first echo moves away. Press F near a door."
+    def find_path_to_final_room(self, graph, start, goal):
+        visited = set()
+        stack = [(start, [])]
+
+        while stack:
+            room, path = stack.pop()
+
+            if room == goal:
+                return path
+
+            if room not in visited:
+                visited.add(room)
+
+                # Reversed order so DFS checks left first, then middle, then right
+                for door in ["right", "middle", "left"]:
+                    if door in graph[room]:
+                        next_room = graph[room][door]
+                        stack.append((next_room, path + [door]))
+
+        return []
+
+    def selected_door(self, character):
+        feet = character.feet_hitbox()
+
+        if feet.colliderect(self.left_door_rect):
+            return "left"
+
+        if feet.colliderect(self.middle_door_rect):
+            return "middle"
+
+        if feet.colliderect(self.right_door_rect):
+            return "right"
+
+        return None
+
+    def selected_button(self, character):
+        feet = character.feet_hitbox()
+
+        for button_name in self.button_rects:
+            if feet.colliderect(self.button_rects[button_name]):
+                return button_name
+
+        return None
+
+    def choose_door(self, door, character):
+        self.current_c_room = self.c_graph[self.current_c_room][door]
+        character.set_position(self.spawn_x, self.spawn_y)
+
+        if self.current_c_room == "C_start":
+            self.message = "The doors repeat, but that path feels wrong."
+
+        elif self.current_c_room == "C_one":
+            self.message = "The next echo turns back."
+
+        elif self.current_c_room == "C_two":
+            self.message = "The last echo settles in the centre."
+
+        elif self.current_c_room == "C_final":
+            self.message = "The chamber asks you to repeat what the loop remembers. Press F on the buttons."
+
+    def press_final_button(self, button):
+        self.player_sequence.append(button)
+
+        if self.player_sequence == self.correct_path[:len(self.player_sequence)]:
+            if self.player_sequence == self.correct_path:
+                self.solved = True
+                self.message = "The loop accepts the sequence. The large screen reveals digit 3."
+            else:
+                self.message = "The machine accepts the echo. Continue the remembered path."
+        else:
+            self.player_sequence = []
+            self.message = "The machine rejects the order. Try the remembered path again."
+
+    def event(self, event, character):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_f:
+
+                if self.current_c_room != "C_final":
+                    chosen_door = self.selected_door(character)
+
+                    if chosen_door is not None:
+                        self.choose_door(chosen_door, character)
+
+                else:
+                    chosen_button = self.selected_button(character)
+
+                    if chosen_button is not None and self.solved == False:
+                        self.press_final_button(chosen_button)
+
+    def draw_wrapped_text(self, screen, font, text, colour, box_rect, line_spacing=6):
+        words = text.split()
+        lines = []
+        current_line = ""
+
+        for word in words:
+            test_line = word if current_line == "" else current_line + " " + word
+            test_surface = font.render(test_line, True, colour)
+
+            if test_surface.get_width() <= box_rect.width - 30:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+
+        if current_line:
+            lines.append(current_line)
+
+        total_height = len(lines) * font.get_height() + (len(lines) - 1) * line_spacing
+        start_y = box_rect.y + (box_rect.height - total_height) // 2
+
+        for i, line in enumerate(lines):
+            text_surface = font.render(line, True, colour)
+            text_rect = text_surface.get_rect(centerx=box_rect.centerx)
+            text_rect.y = start_y + i * (font.get_height() + line_spacing)
+            screen.blit(text_surface, text_rect)
+
+    def draw_arrow_overlay(self, screen, direction, rect, colour):
+        x = rect.x
+        y = rect.y
+        w = rect.width
+        h = rect.height
+
+        if direction == "left":
+            shaft = pygame.Rect(
+                int(x + w * 0.35),
+                int(y + h * 0.40),
+                int(w * 0.40),
+                int(h * 0.20)
+            )
+            head = [
+                (int(x + w * 0.20), int(y + h * 0.50)),
+                (int(x + w * 0.42), int(y + h * 0.22)),
+                (int(x + w * 0.42), int(y + h * 0.78))
+            ]
+
+        elif direction == "right":
+            shaft = pygame.Rect(
+                int(x + w * 0.25),
+                int(y + h * 0.40),
+                int(w * 0.40),
+                int(h * 0.20)
+            )
+            head = [
+                (int(x + w * 0.80), int(y + h * 0.50)),
+                (int(x + w * 0.58), int(y + h * 0.22)),
+                (int(x + w * 0.58), int(y + h * 0.78))
+            ]
+
+        else:
+            # middle is shown visually as an up arrow
+            shaft = pygame.Rect(
+                int(x + w * 0.40),
+                int(y + h * 0.35),
+                int(w * 0.20),
+                int(h * 0.40)
+            )
+            head = [
+                (int(x + w * 0.50), int(y + h * 0.15)),
+                (int(x + w * 0.22), int(y + h * 0.42)),
+                (int(x + w * 0.78), int(y + h * 0.42))
+            ]
+
+        pygame.draw.rect(screen, colour, shaft)
+        pygame.draw.polygon(screen, colour, head)
+
+    def draw_screen_arrow(self, screen, direction, rect):
+        glow_colour = (60, 120, 20)
+        bright_colour = (140, 255, 60)
+
+        bigger_rect = pygame.Rect(
+            rect.x - 2,
+            rect.y - 2,
+            rect.width + 4,
+            rect.height + 4
+        )
+
+        self.draw_arrow_overlay(screen, direction, bigger_rect, glow_colour)
+        self.draw_arrow_overlay(screen, direction, rect, bright_colour)
+
+    def draw_button_arrow(self, screen, direction, rect):
+        shadow_colour = (120, 95, 65)
+        main_colour = (210, 190, 150)
+
+        shadow_rect = pygame.Rect(
+            rect.x + 2,
+            rect.y + 2,
+            rect.width,
+            rect.height
+        )
+
+        self.draw_arrow_overlay(screen, direction, shadow_rect, shadow_colour)
+        self.draw_arrow_overlay(screen, direction, rect, main_colour)
+
+    def draw_digit_3(self, screen):
+        font = pygame.font.SysFont("arial", 52, bold=True)
+        digit_colour = (140, 255, 60)
+        glow_colour = (60, 120, 20)
+
+        glow_surface = font.render("3", True, glow_colour)
+        glow_rect = glow_surface.get_rect(center=self.large_screen_digit_rect.center)
+        screen.blit(glow_surface, (glow_rect.x + 2, glow_rect.y + 2))
+
+        digit_surface = font.render("3", True, digit_colour)
+        digit_rect = digit_surface.get_rect(center=self.large_screen_digit_rect.center)
+        screen.blit(digit_surface, digit_rect)
+
+    def draw_debug_rects(self, screen):
+        # Red = loop-room doors
+        pygame.draw.rect(screen, "red", self.left_door_rect, 2)
+        pygame.draw.rect(screen, "red", self.middle_door_rect, 2)
+        pygame.draw.rect(screen, "red", self.right_door_rect, 2)
+
+        # Blue = final-room buttons
+        for rect in self.button_rects.values():
+            pygame.draw.rect(screen, "blue", rect, 2)
+
+        # Green = exit/back door
+        pygame.draw.rect(screen, "green", self.backroom_rect, 2)
+
+    def C_room_screen(self, screen, font):
+        if self.current_c_room == "C_final":
+            screen.blit(self.final_room, (self.room_x, self.room_y))
+
+            # Buttons always show what direction they represent
+            self.draw_button_arrow(screen, "left", self.button_overlay_rects["left"])
+            self.draw_button_arrow(screen, "middle", self.button_overlay_rects["middle"])
+            self.draw_button_arrow(screen, "right", self.button_overlay_rects["right"])
+
+            # Top screens reveal arrows based on correct button presses
+            screen_order = ["right", "left", "middle"]
+
+            for i in range(len(self.player_sequence)):
+                if i < len(screen_order):
+                    screen_position = screen_order[i]
+                    chosen_direction = self.player_sequence[i]
+
+                    self.draw_screen_arrow(
+                        screen,
+                        chosen_direction,
+                        self.screen_overlay_rects[screen_position]
+                    )
+
+            # Large screen only shows 3 after solving
+            if self.solved:
+                self.draw_digit_3(screen)
+
+        else:
+            screen.blit(self.loop_room, (self.room_x, self.room_y))
+
+        # Message box
+        message_box = pygame.Rect(130, 620, 1000, 80)
+        pygame.draw.rect(screen, "white", message_box)
+        pygame.draw.rect(screen, "black", message_box, 2)
+        self.draw_wrapped_text(screen, font, self.message, "black", message_box)
+
+        if self.debug_interactions:
+            self.draw_debug_rects(screen)
+
+    def should_leave(self, character):
+        touching_exit = character.feet_hitbox().colliderect(self.backroom_rect)
+
+        if touching_exit == False:
+            self.exit_ready = True
+            return False
+        if self.exit_ready == True and touching_exit == True:
+            self.exit_ready = False
+            return True
+
+        return False
+#Hashim
