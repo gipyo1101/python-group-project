@@ -188,8 +188,8 @@ while running:
         elsapsed_time = time.time() - start_time 
         remaining_time = max(0, int(time_limit - elsapsed_time)) 
     else:
-        remaining_time = time_limit
-    #5750766
+        remaining_time = time_limit#5750766
+    
     screen.fill('black')
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -202,8 +202,9 @@ while running:
             if quit_button.collidepoint(mouse):
                 running = False
             else:
-                None          
-        if current_state == 'story':
+                None     
+            
+        if current_state == 'story':#5750766
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     story_before_centre_index += 1
@@ -255,11 +256,11 @@ while running:
                 elif piece_count >= 4:
                     map_puzzle_done = True
                     map_message = 'X mark found. The number is 4.'
-                    room_b.message = map_message
+                    room_b.message = map_message#5750766
 
             if current_state == 'C':
                 room_c.event(event, girl_C)
-            #5750766
+            
 
     #gipyo
     if current_state == 'menu':
