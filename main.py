@@ -65,8 +65,12 @@ diary_font = pygame.font.SysFont(None, 30)
 #gipyo
 start_button = pygame.Rect((410,300,400,100)) # (x,y,width,height)
 quit_button = pygame.Rect((410,450,400,100))
-menu_background = pygame.image.load('images/menu image1.jpeg').convert_alpha()
-menu_background = pygame.transform.scale(menu_background, (1280, 720))
+try:
+    menu_background = pygame.image.load('images/menu image1.jpeg').convert_alpha()
+    menu_background = pygame.transform.scale(menu_background, (1280, 720))
+except pygame.error:
+    menu_background = pygame.Surface((1280,720))
+    menu_background.fill('black')
 #gipyo
 
 #gipyo
@@ -180,6 +184,7 @@ exit_story_done = False
 exit_storylines = ['I found all three digits.',"Let's go to the exit."]
 exit_story_index = 0
 password_input = ""
+password_error = ""
 exit_password = "743"
 exit_rect = pygame.Rect(1050, 265, 50, 170)
 running = True
@@ -289,6 +294,7 @@ while running:
                     if password_input == exit_password:
                             exit_story_done = True
                     else:
+                        password_error = "The password is incorrect. Try again."
                         password_input = ""
 
     #gipyo
@@ -488,6 +494,10 @@ while running:
                 pygame.display.flip()
                 pygame.time.delay(5000)
                 running = False
+            
+            if password_error != "":
+                password_error_text = diary_font.render(password_error, True, 'red')
+                screen.blit(password_error_text, (450, 590))
 
 
     #Fajr
