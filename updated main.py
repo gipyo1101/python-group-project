@@ -211,7 +211,7 @@ while running:
                         current_state = 'game'
                         current_room = 'centre'
                         story_centre = True
-                        start_time = time.time()#fajr
+                        start_time = time.time()#5750766
         
         elif current_state == 'game' and story_centre == True:
             if event.type == pygame.KEYDOWN:
