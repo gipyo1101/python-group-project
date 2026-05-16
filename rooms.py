@@ -69,15 +69,18 @@ class A_room():
         self.diary = diary
         self.desk = desk 
         self.books = [('Economics',2001),("Astronomy", 2004),
-                      ('Mathematics',2013),("Fantasy", 1995), ('Computer Science',2006),
-                      ("History", 1978),('Biography',1997),("Romance", 1982)]
+                      ('Mathematics',2013),("Fantasy", 1995), 
+                      ('Computer Science',2006),("History", 1978),
+                      ('Biography',1997),("Romance", 1982)]
         self.bookshelves_rect = [pygame.Rect(360, 320, 90, 30), pygame.Rect(480, 320, 90, 30), 
                                  pygame.Rect(660, 320, 90, 30), pygame.Rect(780, 320, 90, 30),  
                                  pygame.Rect(360, 450, 90, 30), pygame.Rect(480, 450, 90, 30),  
                                  pygame.Rect(660, 450, 90, 30), pygame.Rect(780, 450, 90, 30)]
         
-        self.genres = ['Economics', 'Astronomy','Mathematics','Fantasy',
-                       'Computer Science','History','Biography','Romance']       
+        self.genres = ['Economics', 'Astronomy',
+                       'Mathematics','Fantasy',
+                       'Computer Science','History',
+                       'Biography','Romance']       
         self.diary_rect = pygame.Rect((590,340,50,50))
         self.diary_open = False
         self.diary_page = 0
@@ -138,13 +141,7 @@ class A_room():
         
     def event(self,event,character):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_f:
-                if character.feet_hitbox().colliderect(self.diary_rect):
-                    self.diary_open = True
-                
-                if character.feet_hitbox().colliderect(self.desk_rect):
-                    self.desk_check = True
-                
+            if event.key == pygame.K_f:  
                 for order in range (len(self.bookshelves_rect)):
                     if character.feet_hitbox().colliderect(self.bookshelves_rect[order]):
                         genre = self.genres[order]
@@ -155,6 +152,13 @@ class A_room():
                             if len(self.inventory) == 8 and self.after_bookshelves_story == False:
                                 self.after_bookshelves_story = True
                                 self.books_check = True
+
+                if character.feet_hitbox().colliderect(self.diary_rect):
+                    self.diary_open = True
+                
+                if character.feet_hitbox().colliderect(self.desk_rect):
+                    self.desk_check = True
+                                
             
             if event.key == pygame.K_SPACE:
                 if self.before_diary_story == True:
@@ -306,7 +310,6 @@ class A_room():
                     temp = books[j]
                     books[j] = books[j+1]
                     books[j+1] = temp
-    
         return books
         
     def get_password(self,books):

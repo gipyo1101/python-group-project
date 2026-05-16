@@ -71,10 +71,11 @@ menu_background = pygame.transform.scale(menu_background, (1280, 720))
 
 #gipyo
 rooms = {'centre':['A','B','C','exit'], 'A':['centre','C'],
-                'B':['centre'], 'C':['centre','A'], 'exit':['centre']}
+                'B':['centre'], 'C':['centre'], 'exit':['centre']}
 current_room = 'centre'
 room_a = A_room(A_room_floor, A_room_wall, bookshelf, diary, desk)
 room_A_rect = pygame.Rect(420, 130, 30, 40)
+from_A_to_C_rect = pygame.Rect(878, 320, 60, 60)
 A_room_label = diary_font.render('A',True,'black')
 B_room_label = diary_font.render('B',True,'white')
 C_room_label = diary_font.render('C',True,'black')
@@ -143,8 +144,8 @@ girl_B = Character(595,510,0.7)
 girl_C = Character(595,510,0.7)
 #Hashim
 
-#fajr
-bed_img = pygame.image.load("images/bed.png")
+# 5750766 Fajr
+bed_img = pygame.image.load("images/bed.png")  #room B objects
 bed_img = pygame.transform.scale(bed_img, (200, 200))
 bed_img = pygame.transform.rotate(bed_img, 90)
 map_img = pygame.image.load("images/map.png")
@@ -154,10 +155,14 @@ map_place = pygame.Rect(410, 430, 60, 45)
 piece_count = 0
 map_puzzle_open = False 
 map_puzzle_done = False
+room_b_intro = False   #room B variables
+hallway_message = ""
 map_message = ''
 map_place = pygame.Rect(555, 255, 80, 30)
 room_b = B_room(floor, wall, bed_img,map_img)
-#fajr
+start_time = None
+time_limit = 200 
+# 5750766 Fajr
                 
 #gipyo
 story_before_centre = ['I need to escape this house!','The exit is locked.', 
@@ -170,9 +175,15 @@ storylines_centre = ['There are 3 rooms and the exit.',
 story_centre_index = 0
 story_text_box = pygame.Rect((140,500,1000,120))
 current_state = 'menu'
+exit_story = False
+exit_story_done = False
+exit_storylines = ['I found all three digits.',"Let's go to the exit."]
+exit_story_index = 0
+password_input = ""
+exit_password = "743"
+exit_rect = pygame.Rect(1050, 265, 50, 170)
 running = True
-start_time = None
-time_limit = 120 #fajr
+
 #gipyo
 
 
@@ -186,6 +197,7 @@ while running:
     else:
         remaining_time = time_limit
     #Fajr
+    password_digits_found = room_a.after_desk_check and map_puzzle_done and room_c.solved
     screen.fill('black')
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -215,7 +227,16 @@ while running:
                     story_centre_index += 1
                     if story_centre_index >= len(storylines_centre):
                         story_centre = False
-
+        elif current_state == 'game' and exit_story == True:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    exit_story_index += 1
+                    if exit_story_index >= len(exit_storylines):
+                        exit_story = False
+                if event.key == pygame.K_RETURN:
+                    if password_input == exit_password:
+                        exit_story = True
+                        
         if event.type == pygame.KEYDOWN:
             if current_state == 'A':
                 room_a.event(event,girl_A)
@@ -254,7 +275,21 @@ while running:
 
             if current_state == 'C':
                 room_c.event(event, girl_C)
-            #fajr
+            #fajr   
+
+            if current_state == 'exit':
+                if event.key >= pygame.K_0 and event.key <= pygame.K_9:
+                    if len(password_input) < 3:
+                        password_input += event.unicode
+
+                if event.key == pygame.K_BACKSPACE:
+                    password_input = password_input[:-1]
+
+                if event.key == pygame.K_RETURN:
+                    if password_input == exit_password:
+                            exit_story_done = True
+                    else:
+                        password_input = ""
 
     #gipyo
     if current_state == 'menu':
@@ -299,31 +334,47 @@ while running:
                 story_text = dialogue_font.render(storylines_centre[story_centre_index],True,'black')
                 story_rect = story_text.get_rect(center= story_box.center)
                 screen.blit(story_text, story_rect)
+
+            if password_digits_found and exit_story == True:
+                exit_story = True
+                if exit_story == True:
+                    story_box = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+                    story_text = dialogue_font.render(storylines_centre[story_centre_index],True,'black')
+                    story_rect = story_text.get_rect(center= story_box.center)
+                    screen.blit(story_text, story_rect)
+
+            girl.graphic(screen)
+            if story_centre == False and exit_story == False:
+                girl.movement(centre_walkable)
             #gipyo
 
             #Hashim
             # debug rectangles, remove later
-            #for area in centre_walkable:
+            for area in centre_walkable:
                 #pygame.draw.rect(screen, 'green', area, 2)
                 #pygame.draw.rect(screen, 'blue', room_A_rect, 2)
                 #pygame.draw.rect(screen, 'blue', room_C_rect, 2)
                 #pygame.draw.rect(screen, 'blue', room_B_rect, 2)
+                pygame.draw.rect(screen,'blue',exit_rect,2)
                 #pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)
-
-            girl.movement(centre_walkable)
-            girl.graphic(screen)
-
             if girl.feet_hitbox().colliderect(room_A_rect):
                     current_state = 'A'
                     girl_A.set_position(595,510)
-
-            if girl.feet_hitbox().colliderect(room_C_rect):
-                current_state = 'C'
-                girl_C.set_position(595,510)
-
+            
             if girl.feet_hitbox().colliderect(room_B_rect):
                 current_state = 'B'
                 girl_B.set_position(595,170)
+
+            if girl.feet_hitbox().colliderect(room_C_rect):
+                current_state = 'C'
+                room_c.enter_room()
+                girl_C.set_position(595,510)
+
+            if girl.feet_hitbox().colliderect(exit_rect):
+                if password_digits_found:
+                    current_state = 'exit'
+                    exit_input = ""
+            
             #Hashim
 
     #gipyo
@@ -336,6 +387,12 @@ while running:
                 current_state = 'game'
                 current_room = 'centre'
                 girl.set_position(410,160)
+            
+            if girl_A.feet_hitbox().colliderect(from_A_to_C_rect):
+                if room_a.after_desk_check == True:
+                    current_state = 'C'
+                    room_c.enter_room()
+                    girl_C.set_position(595,510)
 
             if (room_a.before_diary_story == False 
                 and room_a.after_diary_story == False 
@@ -369,7 +426,6 @@ while running:
                 pygame.draw.rect(screen, 'green', A_obstacle[7], 2)
                 pygame.draw.rect(screen, 'green', A_obstacle[8], 2)
                 pygame.draw.rect(screen, 'green', A_obstacle[9], 2)'''
-
     #gipyo
 
     #Fajr
@@ -380,13 +436,28 @@ while running:
             girl_B.movement(B_walkable, [bed_place])
             girl_B.graphic(screen)
 
+            #hallway dialouge before room B
+            if girl_B.player.x > 200:
+                hallway_message = "This placce feels strange"
+
+            if girl_B.player.x > 400: 
+                hallway_message = "It's too quite here"
+
+            if girl_B.player.x > 600:
+                hallway_message = "The door is slightly open"
+
+            if girl_B.player.x > 850:
+                hallway_message = "Maybe someone was here?"
+
+            text = dialogue_font.render(hallway_message, True, (255,255,255))
+            screen.blit(text, (220,50))
+
             if girl_B.feet_hitbox().colliderect(backroom_B):
                 current_state = 'game'
                 current_room = 'centre'
-                girl_B.set_position(410, 485)
-    #Fajr
+                girl.set_position(410, 485)
+    # 5750766 Fajr
         
-
     #Hashim
     elif current_state == 'C':
         current_room = 'C'
@@ -395,9 +466,29 @@ while running:
             girl_C.movement(room_c.walkable)
             girl_C.graphic(screen)
             if room_c.should_leave(girl_C):
+                current_state = 'game'
                 current_room = 'centre'
                 girl.set_position(805, 165)
     # Hashim
+
+    elif current_state == 'exit':
+        if 'exit' in rooms['centre']:
+            screen.fill('black')
+            pygame.draw.rect(screen, 'white', (130,620,1000,80))
+            input_text = dialogue_font.render("Enter the exit password:", True, 'black')
+            screen.blit(input_text, (220,645))
+            password_input_screen= password_input.ljust(3, "_")
+            password_input_screen = " ".join(password_input_screen)
+            password_input_text = dialogue_font.render(password_input_screen, True, 'black')
+            screen.blit(password_input_text, (700,645))
+            if exit_story_done == True:
+                screen.fill('black')
+                escaped_text = title_font.render('YOU ESCAPED!', True, 'white')
+                screen.blit(escaped_text,(380,300))
+                pygame.display.flip()
+                pygame.time.delay(5000)
+                running = False
+
 
     #Fajr
     if current_state != 'menu' and current_state != 'story':
@@ -407,13 +498,10 @@ while running:
             game_over = title_font.render("GAME OVER", True, "red")
             screen.blit(game_over, (420, 300))
             pygame.display.update()
-            pygame.time.delay(2000)
+            pygame.time.delay(5000)
             running = False
     #Fajr
     
-
-    
-
     pygame.display.flip()
 pygame.quit()
 #gipyo

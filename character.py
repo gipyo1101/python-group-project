@@ -21,12 +21,8 @@ class Character:
         self.player.y = round(self.y)
     
     def feet_hitbox(self):
-        return pygame.Rect(
-            round(self.x) + 12,
-            round(self.y) + 34,
-            21,
-            9
-        )
+        return pygame.Rect( round(self.x) + 12,
+            round(self.y) + 34, 21, 9)
     
     def movement(self, walkable = None, barriers = None):
         if walkable is None:
