@@ -420,8 +420,8 @@ while running:
                 #pygame.draw.rect(screen,'blue',exit_rect,2)
                 #pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)
             if girl.feet_hitbox().colliderect(room_A_rect):
-                    current_state = 'A'
-                    girl_A.set_position(595,510)
+                current_state = 'A'
+                girl_A.set_position(595,510)
             
             if girl.feet_hitbox().colliderect(room_B_rect):
                 current_state = 'B'
