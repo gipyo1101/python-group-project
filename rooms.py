@@ -1,6 +1,8 @@
-#gipyo
+# Floor and wall functions, Room A, Room B, and Room C classes
+# 5754447 gipyo
 import pygame
 def get_centre_floor(floor):
+    """Build and return the floor background for the centre room."""
     floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
     for x in range(0, 700, 44):
         for y in range(0,400,20):
@@ -17,6 +19,7 @@ def get_centre_floor(floor):
     return floor_background 
 
 def get_A_room_floor(floor):
+    """Build and return the floor background for the Room A."""
     A_floor_background = pygame.Surface((1280,720), pygame.SRCALPHA)
     for x in range(0,500,44):
         for y in range(0,400,20):
@@ -33,6 +36,7 @@ def get_A_room_floor(floor):
     return A_floor_background
 
 def get_exit_floor(floor):
+    """Build and return the floor background in front of the exit."""
     exit_floor_background = pygame.Surface((1280,720),pygame.SRCALPHA)
     for x in range(700,800,44):
         for y in range(100,280,20):
@@ -40,43 +44,52 @@ def get_exit_floor(floor):
     return exit_floor_background
 
 def get_centre_wall(wall):
+    """Build and return the wall background for the centre room."""
     wall_background = pygame.Surface((1000,80),pygame.SRCALPHA)
     for x in range(0,700,44):
         wall_background.blit(wall,(x,0))
     return wall_background
 
 def get_A_room_wall(wall):
+    """Build and return the wall background for the Room A."""
     A_wall_background =  pygame.Surface((1000,80),pygame.SRCALPHA)
     for x in range(0,500,44):
         A_wall_background.blit(wall,(x,0))
     return A_wall_background
 
 def get_exit_wall(wall):
+    """Build and return the wall background in front of the exit."""
     exit_wall_background = pygame.Surface((1000,180),pygame.SRCALPHA)
     for x in range(704,800,44):
         for y in range(100,280,20):
             exit_wall_background.blit(wall,(x,100))
     return exit_wall_background
-#gipyo
+# 5754447 gipyo
 
 
-#gipyo
+# 5754447 gipyo
 class A_room():
+    """Controls the gameplay systems, interactions, and story progession in Room A."""
     def __init__(self,floor, wall, bookshelf, diary, desk):
+        """Initialises objects, interactable rectangles, story texts, story progression flags
+        tuples and lists data, and password data for Room A."""
         self.floor = floor
         self.wall = wall
         self.bookshelf = bookshelf
         self.diary = diary
         self.desk = desk 
-        self.books = [('Economics',2001),("Astronomy", 2004),
+        # Tuples for each book genre and publication year stored in the list
+        # This book data is searched and sorted during gameplay.
+        self.books = [('Economics',2001),("Astronomy", 2004), 
                       ('Mathematics',2013),("Fantasy", 1995), 
                       ('Computer Science',2006),("History", 1978),
-                      ('Biography',1997),("Romance", 1982)]
+                      ('Biography',1997),("Romance", 1982)] 
+        # Each rectangle represents the collision detection area in front of each bookshelf.
         self.bookshelves_rect = [pygame.Rect(360, 320, 90, 30), pygame.Rect(480, 320, 90, 30), 
                                  pygame.Rect(660, 320, 90, 30), pygame.Rect(780, 320, 90, 30),  
                                  pygame.Rect(360, 450, 90, 30), pygame.Rect(480, 450, 90, 30),  
                                  pygame.Rect(660, 450, 90, 30), pygame.Rect(780, 450, 90, 30)]
-        
+        # These genres are used to compare with self.books.
         self.genres = ['Economics', 'Astronomy',
                        'Mathematics','Fantasy',
                        'Computer Science','History',
@@ -101,6 +114,7 @@ class A_room():
                           'Computer Science': "You found a Computer Science book.",
                           'Economics': "You found an Economics book."}
         self.inventory_open = False
+        # Self.inventory is appended with self.books during gameplay.
         self.inventory = []
         self.before_diary_story = True
         self.before_diary_storylines = ["There is a book on the floor.",
@@ -137,18 +151,23 @@ class A_room():
         self.desk_check = False
         self.desk_input = ""
         self.after_desk_check = False
-        self.password = '7'
+        self.password = '7' # a first digit of the exit password
         
     def event(self,event,character):
+        """Controls keyboard input system for interactions, story progression, and puzzles in Room A."""
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_f:  
+            if event.key == pygame.K_f: 
+                # Checks if the player is interacting with a bookshelf.
                 for order in range (len(self.bookshelves_rect)):
                     if character.feet_hitbox().colliderect(self.bookshelves_rect[order]):
                         genre = self.genres[order]
+                        # Finds the matching book genre using a linear search algorithm.
                         stored_books = self.linear_search_books(genre)
+                        # Prevent duplicate books from being added to the inventory.
                         if stored_books not in self.inventory:
                             self.inventory.append(stored_books)
                             self.find_books = self.books_finding[genre]
+                            # Progress to the next story after collecting all books.
                             if len(self.inventory) == 8 and self.after_bookshelves_story == False:
                                 self.after_bookshelves_story = True
                                 self.books_check = True
@@ -158,9 +177,9 @@ class A_room():
                 
                 if character.feet_hitbox().colliderect(self.desk_rect):
                     self.desk_check = True
-                                
+                
             
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE: # story progression
                 if self.before_diary_story == True:
                     self.before_diary_index += 1 
                     if self.before_diary_index >= len(self.before_diary_storylines):
@@ -174,7 +193,8 @@ class A_room():
                 elif self.after_bookshelves_story == True:
                     self.after_bookshelves_index += 1
                     if self.after_bookshelves_index >= len(self.after_bookshelves_storylines):
-                        self.after_bookshelves_story = False 
+                        self.after_bookshelves_story = False
+                        # The bubble sort algorithm is used after the player collects all books and understands the diary clue.
                         self.inventory= self.bubble_sort_years(self.inventory)
                         self.before_desk_story = True
 
@@ -183,23 +203,23 @@ class A_room():
                     if self.before_desk_index >= len(self.before_desk_storylines):
                         self.before_desk_story = False
             
-            if event.key == pygame.K_i:
+            if event.key == pygame.K_i: # Open or close the inventory.
                 if self.inventory_open == False:
                     self.inventory_open = True
                 else:
                     self.inventory_open = False
 
             if self.diary_open == True:
-                if event.key == pygame.K_e:
+                if event.key == pygame.K_e: # Turn to next pages.
                     self.diary_page += 1
                     if self.diary_page >= len(self.diary_texts):
                         self.diary_page = len(self.diary_texts) - 1
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_q: # Turn to previous pages.
                     self.diary_page -= 1
                     if self.diary_page < 0:
                         self.diary_page = 0
 
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_ESCAPE: # Close the diary.
                     self.diary_open = False                   
                     self.diary_page = 0
                     if self.diary_check == False:
@@ -221,9 +241,8 @@ class A_room():
                     else:
                         self.desk_input = ""
 
-
-
     def A_room_screen(self,screen,character,diary_font,dialogue_font):
+        """Draws the Room A environment, UI design, story texts, diary, inventory, and desk password on the screen."""
         screen.blit(self.floor,(350,160))
         screen.blit(self.wall,(350,80))
         screen.blit(self.bookshelf,(330,200))
@@ -231,7 +250,6 @@ class A_room():
         screen.blit(self.diary,(600,350))
         screen.blit(self.desk,(553,110))
         
-
         if self.before_diary_story == True:
             story_box_1 = pygame.draw.rect(screen, 'white', (130,620,1000,80))
             story_text_1 = dialogue_font.render(self.before_diary_storylines[self.before_diary_index],True,'black')
@@ -244,23 +262,27 @@ class A_room():
             story_rect_2 = story_text_2.get_rect(center= story_box_2.center)
             screen.blit(story_text_2, story_rect_2)
             
-
         if self.diary_open == True:
             pygame.draw.rect(screen, 'white', (410, 120, 400, 400))
+            # Split diary text into multiple lines for suitable screen display.
             newline = self.diary_texts[self.diary_page].split('\n')
             for i in range(len(newline)):
                 self.diary_inside = dialogue_font.render(newline[i], True, 'black')
+                # Render each line with additional vertical gap.
                 screen.blit(self.diary_inside, (420,170 + i * 50))
 
+        # Display the player's inventory.
         if self.inventory_open == True:
             pygame.draw.rect(screen,'white',(30,200,300,300))
             for i in range(len(self.inventory)):
+                # Convert the tuple into a string.
                 title_year = str(self.inventory[i])
                 inventory_text = diary_font.render(title_year,True,'black')
                 screen.blit(inventory_text,(50,220+ i * 30))
-
+        
+        #
         if self.inventory and self.books_check == False:
-            found_books = self.inventory[-1]
+            found_books = self.inventory[-1] # the last collected book
             books_genre = found_books[0]
             finding_books_rect = pygame.draw.rect(screen, 'white', (280,620,700,80))
             finding_texts = dialogue_font.render("You found a " + books_genre + " book.", True, 'black')
@@ -297,15 +319,18 @@ class A_room():
             
 
     def linear_search_books(self,genre):
+        """Find and return a book by genre."""
         for i in range(len(self.books)):
             if genre == self.books[i][0]:
                 return self.books[i]
         return None
 
     def bubble_sort_years(self,books):
+        """Sort books into chronological order and return the sorted list in the inventory."""
         repeated_nums = len(books) - 1
         for i in range(repeated_nums, 0, -1):
             for j in range(i):
+                # Swap books if the year in the first index is greater than the year in next index.
                 if books[j][1] > books[j+1][1]:
                     temp = books[j]
                     books[j] = books[j+1]
@@ -313,15 +338,18 @@ class A_room():
         return books
         
     def get_password(self,books):
-        clue_genre = ('History','Fantasy','Astronomy','Romance')
+        """Create and return the desk password from the diary clues."""
+        diary_clue_genre = ('History','Fantasy','Astronomy','Romance')
         books_for_password = []
         for book in books:
-            if book[0] in clue_genre:
+            # Only collect books mentioned in the diary.
+            if book[0] in diary_clue_genre:
                 books_for_password.append(book)
         books_list = self.bubble_sort_years(books_for_password)
+        # Merge the final digit of each year to get the password.
         password = ''.join(str(year)[-1] for pw, year in books_list)
         return password
-#gipyo
+# 5754447 gipyo
 
 # Fajr
 class B_room():

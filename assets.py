@@ -1,48 +1,55 @@
-#gipyo
+# Asset loading module
+# 5754447 gipyo
 import pygame
-def get_floors():
+def get_floors(): 
+    """Load, crop, and return the floor tile used to build room floors."""
     floors = pygame.image.load('images/floorswalls_LRK.png').convert_alpha()
-    floor = pygame.Surface((44,20), pygame.SRCALPHA)
-    floor.blit(floors, (0,0), ((22,82,44,20)))
+    floor = pygame.Surface((44,20), pygame.SRCALPHA) # Crop an image to 44 x 20
+    floor.blit(floors, (0,0), ((22,82,44,20))) # (x = 22, y = 82, width = 44, height = 20)
     return floor
 
 def get_walls():
+    """Load, crop, scale, and return the wall tile used to build room walls."""
     walls = pygame.image.load('images/floorswalls_LRK.png').convert_alpha()
-    wall = pygame.Surface((44,80),pygame.SRCALPHA)
-    wall.blit(walls,(0,0),(22,20,44,80))
-    wall = pygame.transform.scale(wall,(44,150))
+    wall = pygame.Surface((44,80),pygame.SRCALPHA) # Crop an image to 44 x 80
+    wall.blit(walls,(0,0),(22,20,44,80)) # (x = 22, y = 20, width = 44, height = 80)
+    wall = pygame.transform.scale(wall,(44,150)) # Scale to 44 x 150
     return wall
 
 
 def get_doors():
+    """Load, crop, scale, and return the door image."""
     doors = pygame.image.load('images/doors_LRK.png').convert_alpha()
-    door = pygame.Surface((40,56),pygame.SRCALPHA)
-    door.blit(doors,(0,0),(102,16,40,56))
-    door_scale = pygame.transform.scale(door,(52,64))
+    door = pygame.Surface((40,56),pygame.SRCALPHA) # Crop an image to 40 x 56
+    door.blit(doors,(0,0),(102,16,40,56)) # (x = 102, y = 16, width = 40, height = 56)
+    door_scale = pygame.transform.scale(door,(52,64))  # Scale to 52 x 64
     return door_scale
 
 
 def get_diary():
+    """Load, crop, scale, and return the diary image."""
     furniture_set = pygame.image.load('images/furniture set.png').convert_alpha()
-    diary = pygame.Surface((17,11),pygame.SRCALPHA)
-    diary.blit(furniture_set,(0,0),(327,115,17,11))
-    diary_scale = pygame.transform.scale(diary,(30,20))
+    diary = pygame.Surface((17,11),pygame.SRCALPHA) # Crop an image to 17 x 11
+    diary.blit(furniture_set,(0,0),(327,115,17,11)) # (x = 327, y = 115, width = 17, height = 11)
+    diary_scale = pygame.transform.scale(diary,(30,20)) # Scale to 30 x 20
     return diary_scale
 
 def get_desk():
+    """Load, crop, scale, and return the desk image."""
     furniture_set = pygame.image.load('images/furniture set.png').convert_alpha()
-    desk = pygame.Surface((65,65),pygame.SRCALPHA)
-    desk.blit(furniture_set,(0,0),(252,0,65,65))
-    desk_scale = pygame.transform.scale(desk,(110,90))
+    desk = pygame.Surface((65,65),pygame.SRCALPHA) # Crop an image to 65 x 65
+    desk.blit(furniture_set,(0,0),(252,0,65,65)) # (x = 252, y = 0, width = 65, height = 65)
+    desk_scale = pygame.transform.scale(desk,(110,90)) # Scale to 110 x 90
     return desk_scale
 
 def get_bookshelf():
+    """Load, crop, scale, and return the bookshelf image."""
     bookshelf_set = pygame.image.load('images/bookshelf_LRK.png').convert_alpha()
-    bookshelf = pygame.Surface((134,126),pygame.SRCALPHA)
-    bookshelf.blit(bookshelf_set, (0, 0), (0, 0, 134, 126))
-    bookshelf_scale = pygame.transform.scale(bookshelf,(250,250))
+    bookshelf = pygame.Surface((134,126),pygame.SRCALPHA) # Crop an image to 134 x 126
+    bookshelf.blit(bookshelf_set, (0, 0), (0, 0, 134, 126)) # (x = 0, y = 0, width = 134, height = 126)
+    bookshelf_scale = pygame.transform.scale(bookshelf,(250,250)) # Scale to 250 x 250
     return bookshelf_scale
-#gipyo
+# 5754447 gipyo
 
 # Hashim (Room C assets)
 ROOM_C_SIZE = (705, 530)

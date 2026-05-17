@@ -1,17 +1,20 @@
-#gipyo
+# Player Character Class module
+# 5754447 gipyo
 import pygame
 class Character:
+    """Controls the player character (PC) in the game."""
     def __init__(self,x,y,speed):
-        game_character = pygame.image.load('images/game_character.png').convert_alpha() # because of transparency
-        self.character_image = pygame.Surface((16,16), pygame.SRCALPHA)
-        self.character_image.blit(game_character,(0,0),(0,16,16,16))
-        self.character_image.set_colorkey((0,0,0))
-        self.character = pygame.transform.scale(self.character_image, (40,40))
+        """Initialises the character asset image, position, speed, and rectangle for collision detection."""
+        game_character = pygame.image.load('images/game_character.png').convert_alpha() 
+        self.character_image = pygame.Surface((16,16), pygame.SRCALPHA) # Crop an image to 16 x 16
+        self.character_image.blit(game_character,(0,0),(0,16,16,16)) # (x = 0, y = 16, width = 16, height = 16)
+        self.character_image.set_colorkey((0,0,0)) # Set black (Red = 0, Green = 0, Blue = 0) as the transparent 
+        self.character = pygame.transform.scale(self.character_image, (40,40)) # Scale to 40 x 40
         self.x = x
         self.y = y
         self.speed = speed
         self.player = pygame.Rect(self.x,self.y,40,40)
-#gipyo
+# 5754447 gipyo
 
     #Hashim
     def set_position(self,x,y):
@@ -85,5 +88,6 @@ class Character:
     
     #gipyo
     def graphic(self,screen):
+        """Draws the character on the screen surface."""
         screen.blit(self.character, self.player) 
     #gipyo
