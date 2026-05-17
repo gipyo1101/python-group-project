@@ -412,13 +412,13 @@ while running:
 
             # Hashim
             # debug rectangles, remove later
-            #for area in centre_walkable:
-                #pygame.draw.rect(screen, 'green', area, 2)
-                #pygame.draw.rect(screen, 'blue', room_A_rect, 2)
-                #pygame.draw.rect(screen, 'blue', room_C_rect, 2)
-                #pygame.draw.rect(screen, 'blue', room_B_rect, 2)
-                #pygame.draw.rect(screen,'blue',exit_rect,2)
-                #pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)
+            """for area in centre_walkable:
+                pygame.draw.rect(screen, 'green', area, 2)
+                pygame.draw.rect(screen, 'blue', room_A_rect, 2)
+                pygame.draw.rect(screen, 'blue', room_C_rect, 2)
+                pygame.draw.rect(screen, 'blue', room_B_rect, 2)
+                pygame.draw.rect(screen,'blue',exit_rect,2)
+                pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)"""
             if girl.feet_hitbox().colliderect(room_A_rect):
                 current_state = 'A'
                 girl_A.set_position(595,510)
@@ -497,7 +497,7 @@ while running:
                 pygame.draw.rect(screen, 'green', A_obstacle[6], 2)
                 pygame.draw.rect(screen, 'green', A_obstacle[7], 2)
                 pygame.draw.rect(screen, 'green', A_obstacle[8], 2)
-                pygame.draw.rect(screen, 'green', A_obstacle[9], 2) """
+                pygame.draw.rect(screen, 'green', A_obstacle[9], 2)"""
     # 5754447 Gipyo
 
     # 5750766 Fajr
