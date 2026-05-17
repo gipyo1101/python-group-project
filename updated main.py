@@ -155,6 +155,9 @@ map_place = pygame.Rect(410, 430, 60, 45)
 piece_count = 0
 map_puzzle_open = False 
 map_puzzle_done = False
+A_puzzle_done = False
+A_transition_story = False
+A_transition_index = 0
 #room B variables
 room_b_intro = False
 hallway_message = ""
@@ -168,6 +171,12 @@ story_before_centre = ['I need to escape this house!','The exit is locked.',
                        'I should find the password to get out of here.']
 story_before_centre_index = 0
 story_centre = False
+#5750766
+storylines_after_A = [ 
+     "That diary...something feels wrong",
+     "I think the next room is connected to this",
+     "I should check room B..."
+] #5750766
 storylines_centre = ['There are 3 rooms and the exit.',
                       "Hmm, it looks like I should visit the all rooms.",
                       "Let's go to the A room first."]
@@ -188,8 +197,8 @@ while running:
         elsapsed_time = time.time() - start_time 
         remaining_time = max(0, int(time_limit - elsapsed_time)) 
     else:
-        remaining_time = time_limit#5750766
-    
+        remaining_time = time_limit #5750766
+
     screen.fill('black')
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -202,8 +211,7 @@ while running:
             if quit_button.collidepoint(mouse):
                 running = False
             else:
-                None     
-            
+                None          
         if current_state == 'story':#5750766
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -214,12 +222,21 @@ while running:
                         story_centre = True
                         start_time = time.time()#5750766
         
-        elif current_state == 'game' and story_centre == True:
+        elif current_state == 'game' and story_centre == True: #5750766
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     story_centre_index += 1
                     if story_centre_index >= len(storylines_centre):
                         story_centre = False
+
+        elif A_transition_story == True:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    A_transition_index += 1
+
+                    if A_transition_index >= len(storylines_after_A):
+                        A_transition_story += 1
+                        #5750766
 
         if event.type == pygame.KEYDOWN:
             if current_state == 'A':
@@ -255,12 +272,12 @@ while running:
 
                 elif piece_count >= 4:
                     map_puzzle_done = True
-                    map_message = 'X mark found. The number is 4.'
+                    map_message = 'The x is marked shows number 4!.'
                     room_b.message = map_message#5750766
 
             if current_state == 'C':
                 room_c.event(event, girl_C)
-            
+
 
     #gipyo
     if current_state == 'menu':
@@ -304,8 +321,27 @@ while running:
                 story_box = pygame.draw.rect(screen, 'white', (130,620,1000,80))
                 story_text = dialogue_font.render(storylines_centre[story_centre_index],True,'black')
                 story_rect = story_text.get_rect(center= story_box.center)
-                screen.blit(story_text, story_rect)
-            #gipyo
+                screen.blit(story_text, story_rect)#gipyo
+
+            if A_transition_story and A_transition_index < len(storylines_after_A):#5750766
+
+                transition_box = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+
+                pygame.draw.rect(screen, 'black', transition_box, 3)
+
+                transition_text = dialogue_font.render( 
+                    storylines_after_A[A_transition_index],
+                    True,
+                    'black'
+                )
+
+                transition_rect = transition_text.get_rect(center=transition_box.center)
+
+                screen.blit(transition_text, transition_rect)
+                #5750766
+
+                
+            
 
             #Hashim
             # debug rectangles, remove later
@@ -329,9 +365,11 @@ while running:
 
             if girl.feet_hitbox().colliderect(room_B_rect):
                 current_state = 'B'
-                girl_B.set_position(595,170)
-            #Hashim
+                girl_B.set_position(595,170) 
+                #Hashim
+        
 
+            
     #gipyo
     elif current_state == 'A':
         current_room = 'A'
@@ -342,6 +380,9 @@ while running:
                 current_state = 'game'
                 current_room = 'centre'
                 girl.set_position(410,160)
+
+                story_B = True
+                story_B_index = 0
 
             if (room_a.before_diary_story == False 
                 and room_a.after_diary_story == False 
@@ -385,23 +426,6 @@ while running:
             room_b.B_room_screen(screen, dialogue_font)
             girl_B.movement(B_walkable, [bed_place])
             girl_B.graphic(screen)
-
-            #hallway dialouge before room B
-            if girl_B.rect.x > 200:
-                hallway_message = "This placce feels strange"
-
-            if girl_B.rect.x > 400: 
-                hallway_message = "It's too quite here"
-
-            if girl_B.rect.x > 600:
-                hallway_message = "The door is slightly open"
-
-            if girl_B.rect.x > 850:
-                hallway_message = "Maybe someone was here?"
-
-            text = dialogue_font.render(hallway_message, True, (255,255,255))
-            screen.blit[text, (220,50)]
-
             if girl_B.feet_hitbox().colliderect(backroom_B):
                 current_state = 'game'
                 current_room = 'centre'
