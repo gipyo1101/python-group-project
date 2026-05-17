@@ -1,5 +1,5 @@
 # Floor and wall functions, Room A, Room B, and Room C classes
-# 5754447 gipyo
+# 5754447 Gipyo
 import pygame
 def get_centre_floor(floor):
     """Build and return the floor background for the centre room."""
@@ -64,10 +64,10 @@ def get_exit_wall(wall):
         for y in range(100,280,20):
             exit_wall_background.blit(wall,(x,100))
     return exit_wall_background
-# 5754447 gipyo
+# 5754447 Gipyo
 
 
-# 5754447 gipyo
+# 5754447 Gipyo
 class A_room():
     """Controls the gameplay systems, interactions, and story progession in Room A."""
     def __init__(self,floor, wall, bookshelf, diary, desk):
@@ -349,7 +349,7 @@ class A_room():
         # Merge the final digit of each year to get the password.
         password = ''.join(str(year)[-1] for pw, year in books_list)
         return password
-# 5754447 gipyo
+# 5754447 Gipyo
 
 # Fajr
 class B_room():

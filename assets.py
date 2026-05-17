@@ -1,5 +1,5 @@
 # Asset loading module
-# 5754447 gipyo
+# 5754447 Gipyo
 import pygame
 def get_floors(): 
     """Load, crop, and return the floor tile used to build room floors."""
@@ -49,7 +49,7 @@ def get_bookshelf():
     bookshelf.blit(bookshelf_set, (0, 0), (0, 0, 134, 126)) # (x = 0, y = 0, width = 134, height = 126)
     bookshelf_scale = pygame.transform.scale(bookshelf,(250,250)) # Scale to 250 x 250
     return bookshelf_scale
-# 5754447 gipyo
+# 5754447 Gipyo
 
 # Hashim (Room C assets)
 ROOM_C_SIZE = (705, 530)

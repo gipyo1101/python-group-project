@@ -1,5 +1,5 @@
 # Player Character Class module
-# 5754447 gipyo
+# 5754447 Gipyo
 import pygame
 class Character:
     """Controls the player character (PC) in the game."""
@@ -14,7 +14,7 @@ class Character:
         self.y = y
         self.speed = speed
         self.player = pygame.Rect(self.x,self.y,40,40)
-# 5754447 gipyo
+# 5754447 Gipyo
 
     #Hashim
     def set_position(self,x,y):
@@ -86,8 +86,8 @@ class Character:
             self.player.y = round(self.y)
     #Hashim
     
-    #gipyo
+    # 5754447 Gipyo
     def graphic(self,screen):
         """Draws the character on the screen surface."""
         screen.blit(self.character, self.player) 
-    #gipyo
+    # 5754447 Gipyo
