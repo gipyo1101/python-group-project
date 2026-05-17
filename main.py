@@ -171,7 +171,7 @@ map_message = ''
 map_place = pygame.Rect(555, 255, 80, 30)
 room_b = B_room(floor, wall, bed_img,map_img)
 start_time = None
-time_limit = 200 
+time_limit = 300 
 # 5750766 Fajr
                 
 # 5754447 Gipyo
