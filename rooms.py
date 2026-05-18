@@ -395,7 +395,7 @@ class B_room():
            screen.blit(text,(220,520))
 #Fajr
 
-#Hashim
+#Hashim 5755796
 class C_room():
     def __init__(self, loop_room, final_room, screen_images, button_images, large_screen_images):
         self.loop_room = loop_room
@@ -406,6 +406,12 @@ class C_room():
         self.button_images = button_images
         self.large_screen_images = large_screen_images
 
+        #sounds
+        self.door_sound = None
+        self.button_sound = None
+        self.success_sound = None
+        self.wrong_sound = None
+        
         self.current_c_room = "C_start"
         self.solved = False
         self.exit_ready = False
@@ -418,7 +424,7 @@ class C_room():
 
         # Safe spawn point inside Room C
         self.spawn_x = self.room_x + 350
-        self.spawn_y = self.room_y + 360
+        self.spawn_y = self.room_y + 380
 
         # Directed graph for the looping-door puzzle
         self.c_graph = {
@@ -444,7 +450,7 @@ class C_room():
         self.correct_path = self.find_path_to_final_room(self.c_graph, "C_start", "C_final")
 
         self.player_sequence = []
-        self.message = "The first echo moves away. Press F near a door."
+        self.message = "This room feels like a lost memory. I have to remember the path. Press F near a door."
 
         # Door rectangles in the looping room
         self.left_door_rect = pygame.Rect(self.room_x + 100, self.room_y + 110, 100, 85)
@@ -498,7 +504,7 @@ class C_room():
         if self.solved == False:
             self.current_c_room = "C_start"
             self.player_sequence = []
-            self.message = "The first echo moves away. Press F near a door."
+            self.message = "This room feels like a lost memory. I have to remember the path. Press F near a door."
     def find_path_to_final_room(self, graph, start, goal):
         visited = set()
         stack = [(start, [])]
@@ -545,32 +551,39 @@ class C_room():
 
     def choose_door(self, door, character):
         self.current_c_room = self.c_graph[self.current_c_room][door]
+        if self.current_c_room == "C_start":
+            self.play_sound(self.wrong_sound)
+        else:
+            self.play_sound(self.door_sound)
         character.set_position(self.spawn_x, self.spawn_y)
 
         if self.current_c_room == "C_start":
-            self.message = "The doors repeat, but that path feels wrong."
+            self.message = "The room resets. That path did not break the memory loop."
 
         elif self.current_c_room == "C_one":
-            self.message = "The next echo turns back."
+            self.message = "The first echo was right. The house pulls the memory back."
 
         elif self.current_c_room == "C_two":
-            self.message = "The last echo settles in the centre."
+            self.message = "The second echo answers. The centre of the room feels different."
 
         elif self.current_c_room == "C_final":
-            self.message = "The chamber asks you to repeat what the loop remembers. Press F on the buttons."
+            self.message = "The loop breaks. The chamber asks you to repeat what the house remembers. Press F on the buttons."
 
     def press_final_button(self, button):
+        self.play_sound(self.button_sound)
         self.player_sequence.append(button)
 
         if self.player_sequence == self.correct_path[:len(self.player_sequence)]:
             if self.player_sequence == self.correct_path:
                 self.solved = True
-                self.message = "The loop accepts the sequence. The large screen reveals digit 3."
+                self.play_sound(self.success_sound)
+                self.message = "The memory loop unlocks. The large screen reveals the final digit: 3."
             else:
-                self.message = "The machine accepts the echo. Continue the remembered path."
+                self.message = "The echo matches. Continue the remembered route."
         else:
             self.player_sequence = []
-            self.message = "The machine rejects the order. Try the remembered path again."
+            self.play_sound(self.wrong_sound)
+            self.message = "The memory rejects the order. The sequence resets."
 
     def event(self, event, character):
         if event.type == pygame.KEYDOWN:
@@ -768,4 +781,8 @@ class C_room():
             return True
 
         return False
-#Hashim
+    
+    def play_sound(self, sound):
+        if sound is not None:
+            sound.play()   
+#Hashim 5755796

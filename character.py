@@ -16,7 +16,7 @@ class Character:
         self.player = pygame.Rect(self.x,self.y,40,40)
 # 5754447 Gipyo
 
-    #Hashim
+    #Hashim 5755796
     def set_position(self,x,y):
         self.x = x
         self.y = y
@@ -84,7 +84,7 @@ class Character:
         if not position_is_allowed():
             self.y = old_y
             self.player.y = round(self.y)
-    #Hashim
+    #Hashim 5755796
     
     # 5754447 Gipyo
     def graphic(self,screen):

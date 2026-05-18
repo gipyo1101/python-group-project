@@ -51,7 +51,7 @@ def get_bookshelf():
     return bookshelf_scale
 # 5754447 Gipyo
 
-# Hashim (Room C assets)
+# Hashim 5755796 (Room C assets)
 ROOM_C_SIZE = (705, 530)
 
 def get_c_image(filename, size=None, remove_white=True):
@@ -119,4 +119,21 @@ def get_c_large_screen_blank():
 
 def get_c_large_screen_3():
     return get_c_image("c_large_screen_3.png", (215, 95))
-# Hashim
+
+def get_c_door():
+    try:
+        image = pygame.image.load("images/c_door.png").convert_alpha()
+        image = pygame.transform.scale(image, (60, 82))
+        return image
+    except:
+        # fallback if c_door.png is missing
+        return get_doors()
+
+
+def get_sound(filename):
+    try:
+        return pygame.mixer.Sound("sounds/" + filename)
+    except:
+        return None
+    
+#Hashim 5755796

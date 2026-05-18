@@ -12,9 +12,18 @@ from assets import get_c_loop_room, get_c_final_room
 from assets import get_c_screen_blank, get_c_screen_left, get_c_screen_up, get_c_screen_right
 from assets import get_c_button_blank, get_c_button_left, get_c_button_up, get_c_button_right
 from assets import get_c_large_screen_blank, get_c_large_screen_3
+from assets import get_c_door, get_sound
+
+#Hashim 5755796
+pygame.init()
+try:
+    pygame.mixer.init()
+except:
+    pass
+
+#Hashim 5755796
 
 # 5754447 Gipyo 
-pygame.init()
 screen = pygame.display.set_mode((1280,720))
 floor = get_floors()
 wall = get_walls()
@@ -31,7 +40,18 @@ A_room_wall = get_A_room_wall(wall)
 C_room_wall = get_centre_wall(wall) # fajr
 # 5754447 Gipyo
 
-# Hashim room c assets
+# Hashim 5755796
+c_door = get_c_door()
+
+enter_room_sound = get_sound("enter_room.wav")
+leave_room_sound = get_sound("leave_room.wav")
+c_puzzle_door_sound = get_sound("c_puzzle_door.wav")
+button_sound = get_sound("button_press.wav")
+success_sound = get_sound("puzzle_success.wav")
+wrong_sound = get_sound("wrong_choice.wav")
+
+# Hashim 5755796
+#room c assets
 c_loop_room = get_c_loop_room()
 c_final_room = get_c_final_room()
 
@@ -54,7 +74,26 @@ c_large_screen_images = {
 }
 
 room_c = C_room(c_loop_room, c_final_room, c_screen_images, c_button_images, c_large_screen_images)
-# Hashim
+
+room_c.door_sound = c_puzzle_door_sound
+room_c.button_sound = button_sound
+room_c.success_sound = success_sound
+room_c.wrong_sound = wrong_sound
+
+def play_sound(sound):
+    if sound is not None:
+        sound.play()
+
+def fade_transition(screen):
+    fade = pygame.Surface((1280, 720))
+    fade.fill("black")
+
+    for alpha in range(0, 220, 12):
+        fade.set_alpha(alpha)
+        screen.blit(fade, (0, 0))
+        pygame.display.flip()
+        pygame.time.delay(18)
+# Hashim 5755796
 
 
 # 575447 Gipyo
@@ -98,9 +137,9 @@ bookshelf_8_rect = pygame.Rect(780, 450, 90, 30)
 desk1_rect = pygame.Rect(553, 110, 170, 110)
 # 5754447 Gipyo
 
-#Hashim
+#Hashim 5755796
 room_B_rect = pygame.Rect(410,560,44,40)
-room_C_rect = pygame.Rect(820,130,30,40)
+room_C_rect = pygame.Rect(800, 115, 70, 60)
 backroom_B = pygame.Rect(595, 150, 44, 40)
 backroom_C = pygame.Rect(595, 560, 44, 40)
 
@@ -137,17 +176,17 @@ C_walkable = [
     pygame.Rect(350, 160, 528, 400),   # main room C floor
     pygame.Rect(595, 560, 44, 40),     # bottom doorway
 ]
-#Hashim
+#Hashim 5755796
 
 # 5754447 Gipyo
 girl = Character(580,320,1) # the character in the centre room
 girl_A = Character(600,530,0.7) # the character in the Room A
 # 5754447 Gipyo
 
-#Hashim
+#Hashim 5755796
 girl_B = Character(595,510,0.7)
 girl_C = Character(595,510,0.7)
-#Hashim
+#Hashim 5755796
 
 # 5750766 Fajr
 bed_img = pygame.image.load("images/bed.png")  #room B objects
@@ -164,6 +203,18 @@ A_transition_done = False
 piece_count = 0
 map_puzzle_open = False 
 map_puzzle_done = False
+
+#Hashim 5755796
+B_transition_story = False
+B_transition_index = 0
+B_transition_done = False
+
+storylines_after_B = [
+    "One room on the map kept on looping.",
+    "I should probably check Room C."
+]
+#Hashim 5755796
+
 #room B variables
 room_b_intro = False   
 hallway_message = ""
@@ -263,6 +314,15 @@ while running:
                         A_transition_index = 0
         # 5750766 Fajr
 
+        #Hashim 5755796
+        if B_transition_story == True:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    B_transition_index += 1
+                    if B_transition_index >= len(storylines_after_B):
+                        B_transition_story = False
+                        B_transition_index = 0
+        #Hashim 5755796
 
         elif current_state == 'game' and exit_story == True:
             if event.type == pygame.KEYDOWN:
@@ -311,10 +371,10 @@ while running:
                     room_b.message = map_message
              # 5750766 fajr  
 
-            # Hashim
+            # Hashim 5755796
             if current_state == 'C':
                 room_c.event(event, girl_C)
-            # Hashim
+            # Hashim 5755796
 
             # 5754447 Gipyo
             # Handles the password input for the exit.
@@ -367,7 +427,7 @@ while running:
             screen.blit(centre_wall,(275,80))
             screen.blit(exit_wall,(275,80))
             screen.blit(door,(400,108))
-            screen.blit(door,(800,108))
+            screen.blit(c_door,(802,88))
             screen.blit(A_room_label,(390, 110))
             screen.blit(B_room_label,(385, 575))
             screen.blit(C_room_label,(790,110))
@@ -403,14 +463,30 @@ while running:
                 transition_rect = transition_text.get_rect(center=transition_box.center)
                 screen.blit(transition_text, transition_rect)
             # 5750766 Fajr
+
+            # Hashim 5755796
+            if B_transition_story and B_transition_index < len(storylines_after_B):
+                transition_box = pygame.draw.rect(screen, 'white', (130,620,1000,80))
+                pygame.draw.rect(screen, 'black', transition_box, 3)
+                transition_text = dialogue_font.render(
+                    storylines_after_B[B_transition_index],
+                    True,
+                    'black'
+                )
+                transition_rect = transition_text.get_rect(center=transition_box.center)
+                screen.blit(transition_text, transition_rect)
+            # Hashim 5755796
             
             # 5754447 Gipyo
             # The player cannot move when the story dialouge is in progress.
-            if story_centre == False and A_transition_story == False and exit_story == False:
+            if (story_centre == False 
+                and A_transition_story == False 
+                and B_transition_story == False 
+                and exit_story == False):
                 girl.movement(centre_walkable)
             # 5754447 Gipyo
 
-            # Hashim
+            # Hashim 5755796
             # debug rectangles, remove later
             """for area in centre_walkable:
                 pygame.draw.rect(screen, 'green', area, 2)
@@ -420,23 +496,29 @@ while running:
                 pygame.draw.rect(screen,'blue',exit_rect,2)
                 pygame.draw.rect(screen, 'purple', girl.feet_hitbox(), 2)"""
             if girl.feet_hitbox().colliderect(room_A_rect):
+                play_sound(enter_room_sound)
+                fade_transition(screen)
                 current_state = 'A'
                 girl_A.set_position(595,510)
             
             if girl.feet_hitbox().colliderect(room_B_rect):
+                play_sound(enter_room_sound)
+                fade_transition(screen)
                 current_state = 'B'
                 girl_B.set_position(595,170)
 
             if girl.feet_hitbox().colliderect(room_C_rect):
+                play_sound(enter_room_sound)
+                fade_transition(screen)
                 current_state = 'C'
                 room_c.enter_room()
-                girl_C.set_position(595,510)
+                girl_C.set_position(room_c.spawn_x, room_c.spawn_y)
 
             if girl.feet_hitbox().colliderect(exit_rect):
                 if password_digits_found:
                     current_state = 'exit'
                     exit_input = ""
-            # Hashim
+            # Hashim 5755796
             
     # 5754447 Gipyo
     elif current_state == 'A':
@@ -449,6 +531,8 @@ while running:
 
             # The player returns to the centre room after colliding with the backroom rectangle.
             if girl_A.feet_hitbox().colliderect(backroom_A_rect) and 'centre' in rooms['A']:
+                play_sound(leave_room_sound)
+                fade_transition(screen)
                 current_state = 'game'
                 current_room = 'centre'
                 girl.set_position(410,160)
@@ -509,12 +593,19 @@ while running:
             girl_B.graphic(screen)
 
             if girl_B.feet_hitbox().colliderect(backroom_B):
+                play_sound(leave_room_sound)
+                fade_transition(screen)
                 current_state = 'game'
                 current_room = 'centre'
                 girl.set_position(410, 485)
+
+                if map_puzzle_done == True and B_transition_done == False:
+                    B_transition_story = True
+                    B_transition_index = 0
+                    B_transition_done = True
     # 5750766 Fajr
         
-    #Hashim
+    #Hashim 5755796
     elif current_state == 'C':
         current_room = 'C'
         if current_room == 'C' and 'C' in rooms['centre'] and rooms['A']:
@@ -522,10 +613,12 @@ while running:
             girl_C.movement(room_c.walkable)
             girl_C.graphic(screen)
             if room_c.should_leave(girl_C):
+                play_sound(leave_room_sound)
+                fade_transition(screen)
                 current_state = 'game'
                 current_room = 'centre'
                 girl.set_position(805, 165)
-    # Hashim
+    # Hashim 5755796
 
     # 5754447 Gipyo
     elif current_state == 'exit':
